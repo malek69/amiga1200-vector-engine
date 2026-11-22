@@ -1,3 +1,7 @@
+; ============================================================================
+;  MODUL: whdload_slave.s | Amiga 1200 (AGA / 68020+) & THEA1200 Vector Engine v1.0
+;  FUNKCJE: WHDLoad Slave v17 (ws_KickSize=0, relokacja sekcji Hunk bez Kickstart ROM)
+; ============================================================================
     machine 68020
     section code,code
 ws: moveq #-1,d0

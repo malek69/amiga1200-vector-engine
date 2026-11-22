@@ -1,3 +1,7 @@
+; ============================================================================
+;  MODUL: vec3d_engine.i | Amiga 1200 (AGA / 68020+) & THEA1200 Vector Engine v1.0
+;  FUNKCJE: init_fill_lut (tablica 512KB XOR), draw_polygon_mode (rasteryzator N-katow + wyciecia)
+; ============================================================================
 init_fill_lut:
     movem.l d0-d6/a0,-(sp)
     lea     fill_lut,a0

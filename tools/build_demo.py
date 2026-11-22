@@ -67,15 +67,15 @@ def main():
     ms_t = open(ms_p).read().replace("mulu.l  #10,d0", f"mulu.l  #{args.fps},d0").replace("divu.l  #5499,d0", f"divu.l  #{int(round(hz_r))},d0").replace("    ; skip AA", "    ; skip AA for 50FPS speed")
     open(ms_p, "w").write(ms_t)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"lowpass=f=3200,aresample={int(round(hz_r))}:resampler=soxr,volume=0.68", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
-    w_s, h_s = (320, 240) if args.fps >= 45 else [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
+    w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     x0, y0, cw, ch = 0, 0, w_s, h_s
     if args.crop_43 and (w_s / max(1, h_s)) > 1.5:
         cw = int(round(h_s * 1.28))
         x0 = (w_s - cw) // 2
-    sc = min(312.0 / cw, 248.0 / ch)
-    ox, oy = (320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5
+    sc = min(312.0 / 320.0, 248.0 / 240.0) if args.fps >= 45 else min(312.0 / cw, 248.0 / ch)
+    ox, oy = (320.0 - 320.0 * sc) * 0.5, (256.0 - 240.0 * sc) * 0.5 if args.fps >= 45 else (320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5
     proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=320:240:flags=lanczos,minterpolate=fps={args.fps}:mi_mode=mci:mc_mode=obmc:me=tss" if args.fps >= 45 else f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
-    fb, uniq, fl, pr_raw, pr_lbl = cw * ch * 3, {}, [], None, None
+    fb, uniq, fl, pr_raw, pr_lbl = (320 * 240 * 3 if args.fps >= 45 else cw * ch * 3), {}, [], None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
     def mpoly(pts):
         m = []
@@ -88,7 +88,7 @@ def main():
         raw = proc.stdout.read(fb)
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
-        im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
+        im = np.frombuffer(raw, dtype=np.uint8).reshape((240, 320, 3) if args.fps >= 45 else (ch, cw, 3))
         r, g, b = im[:,:,0].astype(np.int16), im[:,:,1].astype(np.int16), im[:,:,2].astype(np.int16)
         lum = cv2.medianBlur(((r*30 + g*59 + b*11)//100).astype(np.uint8), 3)
         db = lum < args.threshold

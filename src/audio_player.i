@@ -32,15 +32,15 @@ setup_paula:
     move.w  #AUDIO_BUF_SIZE/2,AUD2LEN(a5)
     move.w  #AUDIO_BUF_SIZE/2,AUD3LEN(a5)
 
-    move.w  #215,AUD0PER(a5)        ; 3546895 / 215 = 16497 Hz
-    move.w  #215,AUD1PER(a5)
-    move.w  #215,AUD2PER(a5)
-    move.w  #215,AUD3PER(a5)
+    move.w  #24,AUD0PER(a5)        ; 3546895 / 215 = 16497 Hz
+    move.w  #24,AUD1PER(a5)
+    move.w  #24,AUD2PER(a5)
+    move.w  #24,AUD3PER(a5)
 
-    move.w  #40,AUD0VOL(a5)
-    move.w  #40,AUD1VOL(a5)
-    move.w  #40,AUD2VOL(a5)
-    move.w  #40,AUD3VOL(a5)
+    move.w  #24,AUD0VOL(a5)
+    move.w  #24,AUD1VOL(a5)
+    move.w  #24,AUD2VOL(a5)
+    move.w  #24,AUD3VOL(a5)
 
     move.w  #$0080,INTREQ(a5)
     move.w  #$c080,INTENA(a5)

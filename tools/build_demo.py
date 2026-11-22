@@ -147,7 +147,7 @@ def main():
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")], check=True)
     os.remove(ss)
     open(os.path.join(pr, f"{fn_d}.info"), "wb").write(mk_ico(2))
-    open(os.path.join(pd, f"{fn_d}.info"), "wb").write(mk_ico(4, "WHDLoad", [f"SLAVE={fn_d}.slave", "NoPreload"]))
+    open(os.path.join(pd, f"{fn_d}.info"), "wb").write(mk_ico(4, "WHDLoad", [f"SLAVE={fn_d}.slave"]))
     mk_lha(os.path.join(od, f"{fn_d}_THEA1200.lha"), pr)
     shutil.rmtree(pr)
     print(f"GOTOWE: {exe_out} oraz {fn_d}_THEA1200.lha", flush=True)

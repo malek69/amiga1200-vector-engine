@@ -4,7 +4,7 @@ import build_demo as bd
 vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases"
 os.makedirs(od, exist_ok=True)
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=5400,aresample=11516:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "11516", f"{sd}/median_audio.raw"], check=True)
+subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=7600,aresample=16497:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "16497", f"{sd}/median_audio.raw"], check=True)
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop='min(iw\,ih*4/3)':ih,scale=936:744:flags=lanczos,fps=30", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 936 * 744 * 3, {}, list(), None, None
 k3 = np.ones((3, 3), dtype=np.uint8)
@@ -31,10 +31,8 @@ while True:
     gray = ((r * 30 + g * 59 + b * 11) // 100).astype(np.uint8)
     dark_ratio = np.mean((gray < 110) & (red_m == 0))
     if dark_ratio > 0.16:
-        walls = ((gray < 95) & (red_m == 0)).astype(np.uint8) * 255
-        edges = cv2.morphologyEx(walls, cv2.MORPH_GRADIENT, k5)
-        deep = ((gray < 28) & (red_m == 0)).astype(np.uint8) * 255
-        blk_m = cv2.bitwise_or(edges, deep)
+        walls = ((gray < 110) & (red_m == 0)).astype(np.uint8) * 255
+        blk_m = cv2.morphologyEx(walls, cv2.MORPH_GRADIENT, k5)
     else:
         blk_m = ((gray < 135) & (red_m == 0)).astype(np.uint8) * 255
     dp = list()

@@ -53,10 +53,10 @@ while True:
         for eps in (1.1, 1.6, 2.2):
             cur, v_tot = list(), 0
             for d, i in items:
-                if op_base in (2, 3) and (d % 2): continue
+                if op_base == 2 and (d % 2): continue
                 if cv2.contourArea(cnts[i]) < (2.0 if (d % 2) else 3.5): continue
                 poly = snap_poly(cnts[i], eps)
-                if poly: cur.append((op_base if op_base in (2, 3) else (d % 2), poly)); v_tot += len(poly)
+                if poly: cur.append(((4 if (d % 2) else 3) if op_base == 3 else (2 if op_base == 2 else (d % 2)), poly)); v_tot += len(poly)
             if v_tot <= 360 or eps == 2.2: dp.extend(cur); break
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

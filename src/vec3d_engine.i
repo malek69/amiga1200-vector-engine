@@ -86,7 +86,7 @@ draw_polygon_mode:
     move.l  draw_bpl2(pc),a2
     bra.s   .to
 .t3: cmp.w  #3,d0
-    bne.s   .to
+    blo.s   .to
     move.l  draw_bpl3(pc),a2
 .to: add.l  d6,a2
     moveq   #40,d7
@@ -94,8 +94,8 @@ draw_polygon_mode:
     sub.w   d4,d7
     subq.w  #2,d7
     lea     fill_lut,a3
-    cmp.w   #1,d0
-    beq.s   .rc
+    btst    #0,d0
+    bne.s   .rc
 .ro: moveq  #0,d2
     move.w  d4,d1
 .wo: moveq  #0,d0

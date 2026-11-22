@@ -1,3 +1,5 @@
+[English Version](README.en.md)
+
 # Amiga 1200 / THEA1200 Vector Stream Demo Engine
 
 Bare-metalowy silnik demoscenowy dla **Commodore Amiga 1200 (AGA, 68020+, 2 MB Chip + 8 MB Fast RAM)** oraz konsoli **THEA1200** (WHDLoad bez Kickstartu).

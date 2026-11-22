@@ -83,14 +83,13 @@ def main():
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
         im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
-        im_b = cv2.medianBlur(im, 3).astype(np.int16)
-        gray = ((im_b[:,:,0]*30 + im_b[:,:,1]*59 + im_b[:,:,2]*11)//100).astype(np.int16)
-        b_rgb = np.concatenate([im_b[4,:], im_b[-5,:], im_b[:,4], im_b[:,-5]], axis=0)
-        bg = np.median(b_rgb, axis=0)
-        bg_g = int((bg[0]*30 + bg[1]*59 + bg[2]*11)//100)
-        diff = np.abs(im_b - bg).sum(axis=2)
-        db = (diff > 48) | (np.abs(gray - bg_g) > 24)
-        if np.mean(db) > 0.65: db = ~db
+        g8 = cv2.GaussianBlur(cv2.cvtColor(im, cv2.COLOR_RGB2GRAY), (5, 5), 0)
+        ed = cv2.Sobel(g8, cv2.CV_16S, 1, 1, ksize=3)
+        edges = cv2.convertScaleAbs(ed) > 38
+        _, otsu = cv2.threshold(g8, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+        db = (otsu > 0) | edges
+        if np.mean(db) > 0.58: db = ~db
+        db = cv2.morphologyEx(db.astype(np.uint8)*255, cv2.MORPH_CLOSE, k3) > 0
         dp = []
         if np.any(db):
             dm = cv2.morphologyEx(db.astype(np.uint8) * 255, cv2.MORPH_OPEN, k3)
@@ -105,7 +104,7 @@ def main():
                     d, p = 0, int(hr.item(i, 3))
                     while p != -1: d += 1; p = int(hr.item(p, 3))
                     items.append((d, i))
-                for d, i in sorted(items):
+                for d, i in sorted(items)[:28]:
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
                     poly = mpoly(cv2.approxPolyDP(cnts[i], 4.5, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))

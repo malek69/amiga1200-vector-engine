@@ -38,11 +38,11 @@ def mk_lha(lp, rf):
 def get_hunk_layout(exe_path):
     data = open(exe_path, "rb").read()
     pos = 8
-    count = struct.unpack(">I", data[pos:pos+4])[0]
+    count = struct.unpack(">I", data[pos:pos+4])[0][0]
     pos += 12
     fast_bytes = 0
     for _ in range(count):
-        sz_flags = struct.unpack(">I", data[pos:pos+4])[0]
+        sz_flags = struct.unpack(">I", data[pos:pos+4])[0][0]
         pos += 4
         b_len = ((sz_flags & 0x3FFFFFFF) * 4 + 16) & ~0xF
         if not (sz_flags & 0x40000000):

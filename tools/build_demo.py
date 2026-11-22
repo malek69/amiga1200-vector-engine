@@ -140,7 +140,6 @@ def main():
     mk_lha(lha_out, pr)
     shutil.rmtree(pr)
     print(f"GOTOWE: {exe_out} ({sz/1048576:.2f} MB) oraz {lha_out}", flush=True)
-if __name__ == "__main__": main()
     exe_out = os.path.join(od, args.name)
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
     os.chmod(exe_out, 0o755)

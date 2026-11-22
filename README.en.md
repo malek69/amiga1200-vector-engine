@@ -1,6 +1,7 @@
 [Wersja Polska](README.md)
 
 # Amiga 1200 / THEA1200 Vector Stream Demo Engine
+n![Amiga 1200 AGA Vector Engine Preview](docs/preview.png)
 
 Bare-metal demoscene vector & silhouette streaming engine for **Commodore Amiga 1200 (AGA, Motorola 68020+, 2 MB Chip RAM + 8 MB Fast RAM)** and **THEA1200** console (Kickstart-free WHDLoad).
 

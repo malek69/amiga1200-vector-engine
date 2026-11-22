@@ -35,6 +35,20 @@ def mk_lha(lp, rf):
             hb = bytearray(b"-lh0-") + struct.pack("<IIIB", len(et)+len(p), len(p), 0x56750000, 0x20) + b"\x01" + bytes([len(fb)]) + fb + struct.pack("<HBH", crc(p), 65, len(et))
             ar += bytes([len(hb), sum(hb)&0xff]) + hb + et + p
     open(lp, "wb").write(ar + b"\x00")
+def get_hunk_layout(exe_path):
+    data = open(exe_path, "rb").read()
+    pos = 8
+    count = struct.unpack(">I", data[pos:pos+4])[0]
+    pos += 12
+    fast_bytes = 0
+    for _ in range(count):
+        sz_flags = struct.unpack(">I", data[pos:pos+4])[0]
+        pos += 4
+        b_len = ((sz_flags & 0x3FFFFFFF) * 4 + 16) & ~0xF
+        if not (sz_flags & 0x40000000):
+            fast_bytes += b_len
+    return fast_bytes
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--video", required=True)
@@ -148,8 +162,9 @@ def main():
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
     os.chmod(exe_out, 0o755)
     sz = os.path.getsize(exe_out)
-    em = ((sz * 2 + 0x0B0000 + 0xFFFF) & ~0xFFFF)
-    lo = em - sz - 256
+    fb_need = get_hunk_layout(exe_out)
+    lo = (fb_need + 0x1000 + 0xF) & ~0xF
+    em = ((lo + sz + 0x4000 + 0xFFFF) & ~0xFFFF)
     pr = os.path.join(od, "_tmp_pkg")
     shutil.rmtree(pr, ignore_errors=True)
     fn_d = args.name.title().replace("_", "")

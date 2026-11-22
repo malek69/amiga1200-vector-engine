@@ -75,7 +75,7 @@ def main():
     sc = min(312.0 / 320.0, 248.0 / 240.0) if args.fps >= 45 else min(312.0 / cw, 248.0 / ch)
     ox, oy = ((320.0 - 640.0 * sc) * 0.5, (256.0 - 480.0 * sc) * 0.5) if args.fps >= 45 else ((320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5)
     proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=312:248:flags=area,fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "gray", "-"], stdout=subprocess.PIPE)
-    fb, uniq, fl, pr_raw, pr_lbl = 312 * 248, {},, None, None
+    fb, uniq, fl, pr_raw, pr_lbl = 312 * 248, {}, list(), None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
     while True:
         raw = proc.stdout.read(fb)
@@ -83,7 +83,7 @@ def main():
         if raw == pr_raw: fl.append(pr_lbl); continue
         g = np.frombuffer(raw, dtype=np.uint8).reshape((248, 312))
         db = g < args.threshold
-        dp =
+        dp = list()
         if np.any(db):
             dm = db.astype(np.uint8) * 255
             if args.thin_lines:
@@ -92,22 +92,22 @@ def main():
             cnts, hier = cv2.findContours(dm, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             if hier is not None:
                 hr = hier.reshape(-1, 4)
-                items =
+                items = list()
                 for i in range(len(cnts)):
                     d, par = 0, int(hr.item(i, 3))
                     while par != -1: d += 1; par = int(hr.item(par, 3))
                     items.append((d, i))
                 items.sort()
                 for eps in (1.05, 1.55, 2.2, 3.0):
-                    dp, v_tot =, 0
+                    dp, v_tot = list(), 0
                     for d, i in items:
                         if cv2.contourArea(cnts[i]) < (4.0 if (d & 1) else 10.0): continue
                         pts = cv2.approxPolyDP(cnts[i], eps, True).reshape(-1, 2)
-                        m =
+                        m = list()
                         for (x, y) in pts:
                             pt = (int(x) + 4, int(y) + 4)
                             if not m or m[-1] != pt: m.append(pt)
-                        while len(m) >= 3 and m == m[-1]: m.pop()
+                        while len(m) >= 3 and m[0] == m[-1]: m.pop()
                         if len(m) >= 3:
                             dp.append((d & 1, tuple(m)))
                             v_tot += len(m)

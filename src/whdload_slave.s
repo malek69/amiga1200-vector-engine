@@ -1,4 +1,9 @@
 ; ============================================================================
+;  MODUL: whdload_slave.s | Autorski WHDLoad Slave v17 (Kickstart-Free)
+;  OPIS: Relokuje sekcje Hunk (code, pcmdata, chipdata, fastram_bss) do
+;        pamieci Fast/Chip RAM bez potrzeby posiadania obrazow Kickstart ROM.
+; ============================================================================
+; ============================================================================
 ;  MODUL: whdload_slave.s | Amiga 1200 (AGA / 68020+) & THEA1200 Vector Engine v1.0
 ;  FUNKCJE: WHDLoad Slave v17 (ws_KickSize=0, relokacja sekcji Hunk bez Kickstart ROM)
 ; ============================================================================

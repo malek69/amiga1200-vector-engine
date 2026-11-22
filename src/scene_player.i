@@ -1,4 +1,10 @@
 ; ============================================================================
+;  MODUL: scene_player.i | Dekoder strumienia klatek wektorowych
+;  PROCEDURY:
+;    - play_vector_frame: pobiera wskaznik klatki z vec_frame_table[cur_frame],
+;      aktualizuje kolor pierwszoplanowy w Copperze i wywoluje draw_polygon_mode
+; ============================================================================
+; ============================================================================
 ;  MODUL: scene_player.i | Amiga 1200 (AGA / 68020+) & THEA1200 Vector Engine v1.0
 ;  FUNKCJE: play_vector_frame (dekoder strumienia klatek wektorowych i palety Coppera)
 ; ============================================================================

@@ -1,4 +1,13 @@
 ; ============================================================================
+;  MODUL: gfx_engine.i | Podsystem AGA, Copper i sprzetowy Blitter AA
+;  PROCEDURY:
+;    - sys_takeover: wylacza DMA/IRQ AmigaOS, ustawia 320x256 PAL (3 bitplany)
+;    - setup_copper: buduje dynamiczna Copperliste i palete AGA (COLOR00..07)
+;    - wait_vbl: czeka na koniec ramki PAL i przelacza podwojne bufory ekranu
+;    - blit_clear_full: czysci bitplan Chip-RAM (10240 B) przez Blitter
+;    - apply_blitter_aa: generuje 1-pikselowe wygładzanie krawedzi na BPL3
+; ============================================================================
+; ============================================================================
 ;  PLIK: gfx_engine.i
 ;  OPIS MODULU:
 ;    - Przejecie kontroli nad chipsetem AGA (sys_takeover) i powrot do systemu

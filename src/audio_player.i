@@ -1,4 +1,11 @@
 ; ============================================================================
+;  MODUL: audio_player.i | 4-kanalowy sterownik audio DMA Paula (IRQ Level 4)
+;  PROCEDURY:
+;    - setup_paula: wylacza sprzetowy filtr LED (CIAAPRA bit 1), inicjuje
+;      podwojne bufory Chip-RAM (2048 B) i uruchamia 4 kanaly DMA Pauli
+;    - aud0_irq_handler: przerwanie Level 4 uzupelniajace kolejny blok PCM
+; ============================================================================
+; ============================================================================
 ;  MODUL: audio_player.i | Amiga 1200 (AGA / 68020+) & THEA1200 Vector Engine v1.0
 ;  FUNKCJE: setup_paula, aud0_irq_handler (4-kanalowe DMA Paula + wylaczenie filtra LED)
 ; ============================================================================

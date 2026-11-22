@@ -1,4 +1,16 @@
 ; ============================================================================
+;  MODUL: main.s | Glowny szkielet i petla synchronizacji PAL 50Hz (68020+)
+;  KOLEJNOSC WYWOLAN:
+;    1. start -> sys_takeover (przejecie AGA, Coppera, Blittera, Pauli i IRQ)
+;    2. init_fill_lut (jednorazowa generacja tablicy 512KB XOR w Fast-RAM)
+;    3. mainloop (50 Hz VBL):
+;       - wait_vbl: synchronizacja z plamka w linii Y=260
+;       - blit_clear_full: asynchroniczne czyszczenie BPL2 (czerwien)
+;       - play_vector_frame: dekodowanie klatki i rysowanie do fast_bpl1
+;       - .cp_fast / .clr_fast: 32-bitowy transfer Fast-RAM -> Chip-RAM
+;       - apply_blitter_aa: sprzetowy antyaliasing krawedzi na BPL3
+; ============================================================================
+; ============================================================================
 ;  PLIK: main.s
 ;  PROJEKT: Median - Amiga 1200 / THEA1200 AGA Vector Port [RETAIL VERSION]
 ;  ORYGINAL: "Median" by Umlaut Design (PC / MS-DOS, 2016)

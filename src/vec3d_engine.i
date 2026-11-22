@@ -1,4 +1,12 @@
 ; ============================================================================
+;  MODUL: vec3d_engine.i | Rasteryzator wielokatow N-katnych (Fast-RAM LUT)
+;  PROCEDURY:
+;    - init_fill_lut: buduje w Fast-RAM tablice prefiksowa 512 KB dla parzystosci XOR
+;    - draw_polygon_mode: przycinanie krawedzi (0..319 x 0..255), interpolacja
+;      kroku X przy uzyciu tablicy odwrotnosci inv_tab oraz wypelnianie
+;      poziomych linii (tryb 0: czern BPL1, tryb 1: wyciecie otworu, tryb 2: BPL2)
+; ============================================================================
+; ============================================================================
 ;  MODUL: vec3d_engine.i | Amiga 1200 (AGA / 68020+) & THEA1200 Vector Engine v1.0
 ;  FUNKCJE: init_fill_lut (tablica 512KB XOR), draw_polygon_mode (rasteryzator N-katow + wyciecia)
 ; ============================================================================

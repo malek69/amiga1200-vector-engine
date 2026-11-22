@@ -73,9 +73,9 @@ def main():
         cw = int(round(h_s * 1.28))
         x0 = (w_s - cw) // 2
     sc = min(312.0 / 320.0, 248.0 / 240.0) if args.fps >= 45 else min(312.0 / cw, 248.0 / ch)
-    ox, oy = ((320.0 - 320.0 * sc) * 0.5, (256.0 - 240.0 * sc) * 0.5) if args.fps >= 45 else ((320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5)
-    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=320:240:flags=lanczos,minterpolate=fps={args.fps}:mi_mode=mci:mc_mode=obmc:me=tss" if args.fps >= 45 else f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
-    fb, uniq, fl, pr_raw, pr_lbl = (320 * 240 * 3 if args.fps >= 45 else cw * ch * 3), {}, [], None, None
+    ox, oy = ((320.0 - 480.0 * sc) * 0.5, (256.0 - 360.0 * sc) * 0.5) if args.fps >= 45 else ((320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5)
+    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=480:360:flags=lanczos,minterpolate=fps={args.fps}:mi_mode=mci:mc_mode=obmc:me=tss" if args.fps >= 45 else f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+    fb, uniq, fl, pr_raw, pr_lbl = (480 * 360 * 3 if args.fps >= 45 else cw * ch * 3), {}, [], None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
     def mpoly(pts):
         m = []
@@ -88,7 +88,7 @@ def main():
         raw = proc.stdout.read(fb)
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
-        im = np.frombuffer(raw, dtype=np.uint8).reshape((240, 320, 3) if args.fps >= 45 else (ch, cw, 3))
+        im = np.frombuffer(raw, dtype=np.uint8).reshape((360, 480, 3) if args.fps >= 45 else (ch, cw, 3))
         r, g, b = im[:,:,0].astype(np.int16), im[:,:,1].astype(np.int16), im[:,:,2].astype(np.int16)
         lum = cv2.medianBlur(((r*30 + g*59 + b*11)//100).astype(np.uint8), 3)
         db = lum < args.threshold
@@ -106,11 +106,11 @@ def main():
                     d, p = 0, int(hr.item(i, 3))
                     while p != -1: d += 1; p = int(hr.item(p, 3))
                     items.append((d, i))
-                top_i = set(sorted(range(len(cnts)), key=lambda k: cv2.contourArea(cnts[k]), reverse=True)[:32])
+                top_i = set(sorted(range(len(cnts)), key=lambda k: cv2.contourArea(cnts[k]), reverse=True)[:56])
                 for d, i in sorted(items):
                     if i not in top_i: continue
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 2.5, True).reshape(-1, 2))
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 1.15, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

@@ -15,7 +15,9 @@ def snap_poly(pts, eps):
     for i in range(len(m)):
         x0, y0 = m[i]
         x1, y1 = m[(i + 1) % len(m)]
-        m[(i + 1) % len(m)] = [x0 if abs(x0 - x1) <= 1 else x1, y0 if abs(y0 - y1) <= 1 else y1]
+        if abs(x0 - x1) <= 1 and abs(y0 - y1) > 12: x1 = x0
+        if abs(y0 - y1) <= 1 and abs(x0 - x1) > 12: y1 = y0
+        m[(i + 1) % len(m)] = [x1, y1]
     res = list()
     for pt in m:
         t = tuple(pt)
@@ -29,7 +31,7 @@ while True:
     r, g, b = cv2.split(np.frombuffer(raw, dtype=np.uint8).reshape((496, 624, 3)).astype(np.int16))
     gray = ((r * 30 + g * 59 + b * 11) // 100).astype(np.uint8)
     red_m = cv2.dilate(((r > 150) & ((r - g) > 55)).astype(np.uint8) * 255, k3, iterations=1)
-    blk_m = cv2.bitwise_and(cv2.bitwise_or(cv2.dilate(cv2.Canny(gray, 28, 80), k3, iterations=1), ((gray < 120).astype(np.uint8) * 255)), cv2.bitwise_not(red_m))
+    blk_m = ((cv2.GaussianBlur(gray, (3, 3), 0) < 128) & (red_m == 0)).astype(np.uint8) * 255
     layers = ((2, red_m), (0, blk_m))
     dp = list()
     for op_base, mask in layers:
@@ -43,14 +45,14 @@ while True:
             while par != -1: d += 1; par = int(hr.item(par, 3))
             items.append((d, i))
         items.sort()
-        for eps in (1.1, 1.6, 2.2):
+        for eps in (0.85, 1.25, 1.75):
             cur, v_tot = list(), 0
             for d, i in items:
                 if op_base == 2 and (d % 2): continue
                 if cv2.contourArea(cnts[i]) < (2.0 if (d % 2) else 3.5): continue
                 poly = snap_poly(cnts[i], eps)
                 if poly: cur.append(((4 if (d % 2) else 3) if op_base == 3 else (2 if op_base == 2 else (d % 2)), poly)); v_tot += len(poly)
-            if v_tot <= 360 or eps == 2.2: dp.extend(cur); break
+            if v_tot <= 360 or eps == 1.75: dp.extend(cur); break
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
     pr_raw, pr_lbl = raw, uniq[key]

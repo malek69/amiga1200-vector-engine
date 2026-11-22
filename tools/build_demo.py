@@ -82,7 +82,7 @@ def main():
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
         g = np.frombuffer(raw, dtype=np.uint8).reshape((248, 312))
-        db = g < args.threshold
+        db = cv2.medianBlur(g, 3) < args.threshold
         dp = list()
         if np.any(db):
             dm = db.astype(np.uint8) * 255
@@ -101,7 +101,7 @@ def main():
                 for eps in (1.05, 1.55, 2.2, 3.0):
                     dp, v_tot = list(), 0
                     for d, i in items:
-                        if cv2.contourArea(cnts[i]) < (4.0 if (d & 1) else 10.0): continue
+                        if cv2.contourArea(cnts[i]) < (22.0 if (d & 1) else 10.0): continue
                         pts = cv2.approxPolyDP(cnts[i], eps, True).reshape(-1, 2)
                         m = list()
                         for (x, y) in pts:

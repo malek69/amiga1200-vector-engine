@@ -4,9 +4,10 @@ import build_demo as bd
 vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases"
 os.makedirs(od, exist_ok=True)
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=6000,aresample=13137:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "13137", f"{sd}/median_audio.raw"], check=True)
+subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=4600,aresample=10020:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "10020", f"{sd}/median_audio.raw"], check=True)
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop=\x27min(iw\,ih*4/3)\x27:ih,scale=624:496:flags=lanczos,fps=50", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None
+pr_g = None
 k3 = np.ones((3, 3), dtype=np.uint8)
 def snap_poly(pts, eps):
     ap = cv2.approxPolyDP(pts, eps, True).reshape(-1, 2)
@@ -27,6 +28,9 @@ while True:
     if raw == pr_raw: fl.append(pr_lbl); continue
     r, g, b = cv2.split(np.frombuffer(raw, dtype=np.uint8).reshape((496, 624, 3)).astype(np.int16))
     gray = ((r * 30 + g * 59 + b * 11) // 100).astype(np.uint8)
+    if pr_g is not None and np.mean(np.abs(gray.astype(np.int16) - pr_g)) < 0.9:
+        fl.append(pr_lbl); continue
+    pr_g = gray.astype(np.int16)
     red_m = cv2.dilate(((r > 150) & ((r - g) > 55)).astype(np.uint8) * 255, k3, iterations=1)
     is_city = np.mean((gray > 45) & (gray < 175) & (red_m == 0)) > 0.22
     if is_city:
@@ -49,14 +53,14 @@ while True:
             while par != -1: d += 1; par = int(hr.item(par, 3))
             items.append((d, i))
         items.sort()
-        for eps in (1.0, 1.45, 2.0):
+        for eps in (1.15, 1.65, 2.25):
             cur, v_tot = list(), 0
             for d, i in items:
                 if op_base in (2, 3) and (d % 2): continue
                 if cv2.contourArea(cnts[i]) < (2.5 if (d % 2) else 4.0): continue
                 poly = snap_poly(cnts[i], eps)
                 if poly: cur.append((op_base if op_base in (2, 3) else (d % 2), poly)); v_tot += len(poly)
-            if v_tot <= 560 or eps == 2.0: dp.extend(cur); break
+            if v_tot <= 420 or eps == 2.25: dp.extend(cur); break
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
     pr_raw, pr_lbl = raw, uniq[key]
@@ -69,7 +73,7 @@ for dp, l in uniq.items():
     for op, p in dp: lines.append(f"    dc.w {op},{len(p)}," + ",".join(f"{x},{y}" for x, y in p))
     lines.append("    dc.w -1")
 open(f"{sd}/scene_data.i", "w").write("\n".join(lines) + "\n")
-ms_t = open(f"{sd}/main.s").read().replace("divu.l  #5499,d0", "divu.l  #13137,d0").replace("; 50Hz VBL", "; 50Hz VBL")
+ms_t = open(f"{sd}/main.s").read().replace("divu.l  #5499,d0", "divu.l  #10020,d0").replace("; 50Hz VBL", "; 50Hz VBL")
 open(f"{sd}/main.s", "w").write(ms_t)
 exe = os.path.abspath(f"{od}/MEDIAN_A1200")
 subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe], cwd=sd, check=True)

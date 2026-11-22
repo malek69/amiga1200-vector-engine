@@ -29,12 +29,9 @@ while True:
     r, g, b = cv2.split(np.frombuffer(raw, dtype=np.uint8).reshape((744, 936, 3)).astype(np.int16))
     red_m = cv2.dilate(((r > 150) & ((r - g) > 55)).astype(np.uint8) * 255, k3, iterations=1)
     gray = ((r * 30 + g * 59 + b * 11) // 100).astype(np.uint8)
-    dark_ratio = np.mean((gray < 110) & (red_m == 0))
-    if dark_ratio > 0.16:
-        walls = ((gray < 110) & (red_m == 0)).astype(np.uint8) * 255
-        blk_m = cv2.morphologyEx(walls, cv2.MORPH_GRADIENT, k5)
-    else:
-        blk_m = ((gray < 135) & (red_m == 0)).astype(np.uint8) * 255
+    edges = cv2.dilate(cv2.Canny(gray, 20, 60), k3, iterations=1)
+    deep = ((gray < 48) & (red_m == 0)).astype(np.uint8) * 255
+    blk_m = cv2.bitwise_and(cv2.bitwise_or(edges, deep), cv2.bitwise_not(red_m))
     dp = list()
     for op_base, mask in ((2, red_m), (0, blk_m)):
         if not np.any(mask): continue
@@ -47,14 +44,14 @@ while True:
             while par != -1: d += 1; par = int(hr.item(par, 3))
             items.append((d, i))
         items.sort()
-        for eps in (0.95, 1.4, 2.0):
+        for eps in (1.1, 1.6, 2.2):
             cur, v_tot = list(), 0
             for d, i in items:
                 if op_base == 2 and (d & 1): continue
                 if cv2.contourArea(cnts[i]) < (1.5 if (d % 2) else 2.5): continue
                 poly = snap_poly(cnts[i], eps)
                 if poly: cur.append((2 if op_base == 2 else (d & 1), poly)); v_tot += len(poly)
-            if v_tot <= 920 or eps == 2.0: dp.extend(cur); break
+            if v_tot <= 950 or eps == 2.2: dp.extend(cur); break
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
     pr_raw, pr_lbl = raw, uniq[key]

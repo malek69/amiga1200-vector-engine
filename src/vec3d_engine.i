@@ -82,8 +82,12 @@ draw_polygon_mode:
     move.w  (sp)+,d0
     lea     fast_bpl1,a2
     cmp.w   #2,d0
-    bne.s   .to
+    bne.s   .t3
     move.l  draw_bpl2(pc),a2
+    bra.s   .to
+.t3: cmp.w  #3,d0
+    bne.s   .to
+    move.l  draw_bpl3(pc),a2
 .to: add.l  d6,a2
     moveq   #40,d7
     sub.w   d4,d7

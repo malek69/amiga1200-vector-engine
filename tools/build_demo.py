@@ -1,3 +1,4 @@
+import re
 #!/usr/bin/env python3
 import argparse, math, os, shutil, struct, subprocess, cv2, numpy as np
 
@@ -50,7 +51,14 @@ def main():
     repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", "aresample=9600:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3200:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", "9600", os.path.join(sd, "median_audio.raw")], check=True)
+    MAX_BYTES = 3100000
+    dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
+    hz = max(7200, min(16497, int(1950000 / max(1.0, dur))))
+    per = round(3546895 / hz)
+    ap_f = os.path.join(sd, "audio_player.i")
+    open(ap_f, "w").write(re.sub(r"#\d+(\s*;\s*AUD0PER)", f"#{per}\1", re.sub(r"move\.w\s+#\d+,AUD0PER", f"move.w  #{per},AUD0PER", open(ap_f).read())))
+    print(f"Czas wideo: {dur:.1f}s -> Auto Audio: {hz} Hz (AUD0PER={per})", flush=True)
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"aresample={hz}:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3200:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", str(hz), os.path.join(sd, "median_audio.raw")], check=True)
     cw, ch = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     sc = min(312.0/cw, 248.0/ch)
     ox, oy = (320.0 - cw*sc)*0.5, (256.0 - ch*sc)*0.5

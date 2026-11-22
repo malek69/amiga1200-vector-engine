@@ -64,7 +64,7 @@ def main():
         gt = open(gfx_p).read().replace("$3200", "$1200").replace("move.l  draw_bpl2(pc),a0" + chr(10) + "    bsr.w   blit_clear_full" + chr(10), "")
         open(gfx_p, "w").write(gt)
     ms_p = os.path.join(sd, "main.s")
-    ms_t = open(ms_p).read().replace("mulu.l  #10,d0", f"mulu.l  #{args.fps},d0").replace("divu.l  #5499,d0", f"divu.l  #{int(round(hz_r))},d0").replace("    ; skip AA", "    ; skip AA for 50FPS speed")
+    ms_t = open(ms_p).read().replace("move.l  pcm_played(pc),d0", "move.l  vbl_tick(pc),d0").replace("mulu.l  #10,d0", "; 50FPS VBL").replace("divu.l  #5499,d0", "; 50FPS VBL").replace("    ; skip AA", "    ; skip AA for 50FPS speed")
     open(ms_p, "w").write(ms_t)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"lowpass=f=3200,aresample={int(round(hz_r))}:resampler=soxr,volume=0.68", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
     w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]

@@ -1,6 +1,9 @@
 <p align="center"><img src="docs/engine_logo.png" alt="A1200 Vector Engine v1.0" width="760"></p>
 
 # Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.0 [EN / PL]
+
+> **Credits / Autorzy:** `malek69` & **Gemini AI** *(Vibe Coding Edition, 2026 — AI-assisted M68020 bare-metal code & Python toolchain)*
+
 | Median A1200 v1.0 | Bad Apple!! A1200 v1.0 |
 | :---: | :---: |
 | ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |

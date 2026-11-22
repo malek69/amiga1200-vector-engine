@@ -1,3 +1,4 @@
+; [EN/PL] AUTHORS / AUTORZY: malek69 & Gemini AI (Vibe Coding Edition, 2026)
 ; ============================================================================
 ;  MODULE: audio_player.i | 4-Channel Paula DMA Audio Driver (Level 4 IRQ)
 ;  SUBROUTINES:

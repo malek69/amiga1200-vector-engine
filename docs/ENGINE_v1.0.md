@@ -1,5 +1,8 @@
 # Amiga 1200 / THEA1200 Bare-Metal Vector Engine v1.0
 
+> **Credits / Autorzy:** `malek69` & **Gemini AI** *(Vibe Coding Edition, 2026 — AI-assisted M68020 bare-metal code & Python toolchain)*
+
+
 ## 1. Architecture & Memory Map
 - **CPU Target:** Motorola 68020+ (14 MHz stock A1200 / THEA1200), 32-bit aligned loops.
 - **Chip RAM (~66 KB):** Double-buffered 3-bitplane PAL screens (`320x256`, `3 x 10240 B` x 2), dynamic Copperlist, and dual 2048 B Paula DMA audio buffers.

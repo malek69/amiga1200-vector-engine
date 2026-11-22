@@ -4,8 +4,8 @@ import build_demo as bd
 vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases"
 os.makedirs(od, exist_ok=True)
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=4600,aresample=10020:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "10020", f"{sd}/median_audio.raw"], check=True)
-proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", r"crop=min(iw\,ih*4/3):ih,scale=624:496:flags=lanczos,fps=50", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", "2.1", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=4600,aresample=10020:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "10020", f"{sd}/median_audio.raw"], check=True)
+proc = subprocess.Popen(["ffmpeg", "-v", "error", "-ss", "2.1", "-i", vid, "-vf", r"crop=min(iw\,ih*4/3):ih,scale=624:496:flags=lanczos,fps=50", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None
 k3, k5 = np.ones((3, 3), dtype=np.uint8), np.ones((5, 5), dtype=np.uint8)
 def snap_poly(pts, eps):
@@ -69,7 +69,7 @@ for dp, l in uniq.items():
     for op, p in dp: lines.append(f"    dc.w {op},{len(p)}," + ",".join(f"{x},{y}" for x, y in p))
     lines.append("    dc.w -1")
 open(f"{sd}/scene_data.i", "w").write("\n".join(lines) + "\n")
-ms_t = open(f"{sd}/main.s").read().replace("move.l  pcm_played(pc),d0", "move.l  vbl_tick(pc),d0").replace("mulu.l  #10,d0", "; 50Hz VBL").replace("divu.l  #5499,d0", "; 50Hz VBL")
+ms_t = open(f"{sd}/main.s").read().replace("move.l  vbl_tick(pc),d0", "move.l  vbl_tick(pc),d0").replace("; 50Hz VBL", "; 50Hz VBL").replace("divu.l  #5499,d0", "; 50Hz VBL")
 open(f"{sd}/main.s", "w").write(ms_t)
 exe = os.path.abspath(f"{od}/MEDIAN_A1200")
 subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe], cwd=sd, check=True)

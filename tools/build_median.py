@@ -1,11 +1,11 @@
 import os, shutil, subprocess, sys, zipfile, cv2, numpy as np
 sys.path.insert(0, "tools")
 import build_demo as bd
-vid = os.path.expanduser("~/Pobrane/Ümlaüt Design - Median (PC demo, 2016)_1080p60.mp4")
+vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases"
 os.makedirs(od, exist_ok=True)
 subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "lowpass=f=7200,aresample=16497:resampler=soxr,volume=0.68", "-f", "s8", "-ac", "1", "-ar", "16497", f"{sd}/median_audio.raw"], check=True)
-proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop=1440:1080:240:0,scale=624:496:flags=bilinear,fps=30", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop='min(iw\,ih*4/3)':ih,scale=624:496:flags=bilinear,fps=30", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None
 k3 = np.ones((3, 3), dtype=np.uint8)
 def snap_poly(pts, eps):

@@ -60,7 +60,7 @@ def main():
     print(f"[1/4] Audio: {hz_r:.1f} Hz (AUD0PER={per}) | Video: {args.fps} FPS ({spf} spf)", flush=True)
     ap_p = os.path.join(sd, "audio_player.i"); ap_t = open(ap_p).read(); open(ap_p, "w").write(re.sub(r"#\d+(?=,AUD)", f"#{per}", ap_t))
     ms_p = os.path.join(sd, "main.s"); ms_t = open(ms_p).read(); open(ms_p, "w").write(re.sub(r"cmp\.l\s+#\d+,d0", f"cmp.l   #{spf},d0", ms_t, count=1))
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"aresample={int(round(hz_r))}:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3600:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"aresample={int(round(hz_r))}:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3600:w=0.7,alimiter=limit=0.82:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
     w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     x0, y0, cw, ch = 0, 0, w_s, h_s
     if args.crop_43 and (w_s / max(1, h_s)) > 1.5:

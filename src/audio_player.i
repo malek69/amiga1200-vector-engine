@@ -37,10 +37,10 @@ setup_paula:
     move.w  #215,AUD2PER(a5)
     move.w  #215,AUD3PER(a5)
 
-    move.w  #64,AUD0VOL(a5)
-    move.w  #64,AUD1VOL(a5)
-    move.w  #64,AUD2VOL(a5)
-    move.w  #64,AUD3VOL(a5)
+    move.w  #40,AUD0VOL(a5)
+    move.w  #40,AUD1VOL(a5)
+    move.w  #40,AUD2VOL(a5)
+    move.w  #40,AUD3VOL(a5)
 
     move.w  #$0080,INTREQ(a5)
     move.w  #$c080,INTENA(a5)

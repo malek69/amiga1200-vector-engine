@@ -56,7 +56,7 @@ def main():
     hz = max(7200, min(16497, int(2100000 / max(1.0, dur))))
     per = round(3546895 / hz)
     ap_f = os.path.join(sd, "audio_player.i")
-    open(ap_f, "w").write(re.sub(r"#\d+(\s*;\s*AUD0PER)", f"#{per}\1", re.sub(r"move\.w\s+#\d+,AUD0PER", f"move.w  #{per},AUD0PER", open(ap_f).read())))
+    open(ap_f, "w").write(open(ap_f).read().replace("#215", f"#{per}"))
     print(f"Czas wideo: {dur:.1f}s -> Auto Audio: {hz} Hz (AUD0PER={per})", flush=True)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"aresample={hz}:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3200:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", str(hz), os.path.join(sd, "median_audio.raw")], check=True)
     cw, ch = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]

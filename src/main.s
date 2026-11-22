@@ -44,15 +44,20 @@ mainloop:
     move.l  draw_bpl1(pc),a1
     move.w  #639,d0
 .cp_fast:
-    move.l  (a0),(a1)+
-    clr.l   (a0)+
-    move.l  (a0),(a1)+
-    clr.l   (a0)+
-    move.l  (a0),(a1)+
-    clr.l   (a0)+
-    move.l  (a0),(a1)+
-    clr.l   (a0)+
+    move.l  (a0)+,(a1)+
+    move.l  (a0)+,(a1)+
+    move.l  (a0)+,(a1)+
+    move.l  (a0)+,(a1)+
     dbf     d0,.cp_fast
+    lea     fast_bpl1,a0
+    moveq   #0,d1
+    move.w  #639,d0
+.clr_fast:
+    move.l  d1,(a0)+
+    move.l  d1,(a0)+
+    move.l  d1,(a0)+
+    move.l  d1,(a0)+
+    dbf     d0,.clr_fast
     bsr.w   apply_blitter_aa
 
     btst    #6,CIAAPRA

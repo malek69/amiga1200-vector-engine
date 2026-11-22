@@ -7,3 +7,4 @@ _tmp*/
 *.mp3
 *.wav
 __pycache__/
+releases/BADAPPLE*

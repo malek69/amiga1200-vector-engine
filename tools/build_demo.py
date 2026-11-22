@@ -112,7 +112,7 @@ def main():
                     while p != -1: deps[i] += 1; p = int(hr.item(p, 3))
                 for i in sorted(range(len(cnts)), key=lambda k: deps[k]):
                     d = deps[i]
-                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.000035 if (d&1) else 0.00012): continue
+                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00014 if (d&1) else 0.00014): continue
                     pts = cv2.approxPolyDP(cnts[i], 1.65, True).reshape(-1,2)
                     if len(pts) > 64: pts = cv2.approxPolyDP(cnts[i], 1.75, True).reshape(-1,2)
                     poly = mpoly(pts, 0.30)

@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/engine_logo.png" alt="A1200 Vector Engine v1.0" width="760"></p>
+
 # Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.0 [EN / PL]
 | Median A1200 v1.0 | Bad Apple!! A1200 v1.0 |
 | :---: | :---: |

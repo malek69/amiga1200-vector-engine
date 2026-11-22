@@ -70,10 +70,7 @@ for dp, l in uniq.items():
     for op, p in dp: lines.append(f"    dc.w {op},{len(p)}," + ",".join(f"{x},{y}" for x, y in p))
     lines.append("    dc.w -1")
 open(f"{sd}/scene_data.i", "w").write("\n".join(lines) + "\n")
-ms_t = open(f"{sd}/main.s").read()
-ms_t = ms_t.replace("    move.l  pcm_played(pc),d0
-    mulu.l  #10,d0
-    divu.l  #6599,d0", "    move.l  vbl_tick(pc),d0")
+ms_t = open(f"{sd}/main.s").read().replace("move.l  pcm_played(pc),d0", "move.l  vbl_tick(pc),d0").replace("mulu.l  #10,d0", "; 50Hz").replace("divu.l  #6599,d0", "; 50Hz")
 open(f"{sd}/main.s", "w").write(ms_t)
 exe = os.path.abspath(f"{od}/MEDIAN_A1200")
 subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe], cwd=sd, check=True)

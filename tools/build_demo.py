@@ -86,7 +86,7 @@ def main():
         border = np.concatenate([im_b[2, :], im_b[-3, :], im_b[:, 2], im_b[:, -3]], axis=0)
         bg = np.median(border, axis=0)
         diff = np.abs(im_b - bg).sum(axis=2)
-        db = diff > 55
+        db = diff > 65
         dp = []
         if np.any(db):
             dm = db.astype(np.uint8) * 255
@@ -102,8 +102,8 @@ def main():
                     while p != -1: d += 1; p = int(hr.item(p, 3))
                     items.append((d, i))
                 for d, i in sorted(items):
-                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00004 if (d&1) else 0.00014): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 3.2, True).reshape(-1, 2))
+                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 4.2, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

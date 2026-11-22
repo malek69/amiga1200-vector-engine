@@ -53,7 +53,7 @@ def main():
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(8000, min(16497, int(1950000 / max(1.0, dur))))
+    hz = max(8000, min(16497, int(1780000 / max(1.0, dur))))
     per = round(3546895 / hz)
     hz_r = 3546895.0 / per
     spf = max(1, round(hz_r / args.fps))
@@ -71,7 +71,7 @@ def main():
     proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
     fb, uniq, fl, pr_raw, pr_lbl = cw * ch * 3, {}, [], None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
-    def mpoly(pts):
+    def mpoly(pts, 0.45):
         m = []
         for (x, y) in pts:
             p = (int(max(3, min(316, round(ox + x * sc)))), int(max(3, min(248, round(oy + y * sc)))))
@@ -100,11 +100,11 @@ def main():
                     d, p = 0, int(hr.item(i, 3))
                     while p != -1: d += 1; p = int(hr.item(p, 3))
                     items.append((d, i))
-                top_i = set(sorted(range(len(cnts)), key=lambda k: cv2.contourArea(cnts[k]), reverse=True)[:36])
+                top_i = set(sorted(range(len(cnts)), key=lambda k: cv2.contourArea(cnts[k]), reverse=True)[:32])
                 for d, i in sorted(items):
                     if i not in top_i: continue
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 1.6, True).reshape(-1, 2))
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 1.8, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

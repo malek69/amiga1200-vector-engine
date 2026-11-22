@@ -4,7 +4,7 @@ import build_demo as bd
 vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases"
 os.makedirs(od, exist_ok=True)
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=7400,aresample=16497:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "16497", f"{sd}/median_audio.raw"], check=True)
+subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=6600,aresample=14019:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "14019", f"{sd}/median_audio.raw"], check=True)
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop='min(iw\,ih*4/3)':ih,scale=936:744:flags=lanczos,fps=30", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 936 * 744 * 3, {}, list(), None, None
 k3 = np.ones((3, 3), dtype=np.uint8)
@@ -48,14 +48,14 @@ while True:
             while par != -1: d += 1; par = int(hr.item(par, 3))
             items.append((d, i))
         items.sort()
-        for eps in (0.45, 0.85, 1.35):
+        for eps in (0.75, 1.15, 1.65):
             cur, v_tot = list(), 0
             for d, i in items:
                 if op_base == 2 and (d & 1): continue
                 if cv2.contourArea(cnts[i]) < (4.5 if (d % 2) else 6.0): continue
                 poly = snap_poly(cnts[i], eps)
                 if poly: cur.append((2 if op_base == 2 else (d & 1), poly)); v_tot += len(poly)
-            if v_tot <= 1350 or eps == 1.35: dp.extend(cur); break
+            if v_tot <= 1050 or eps == 1.65: dp.extend(cur); break
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
     pr_raw, pr_lbl = raw, uniq[key]

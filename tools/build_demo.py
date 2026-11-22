@@ -51,9 +51,9 @@ def main():
     repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
-    MAX_BYTES = 3100000
+    MAX_BYTES = 5800000
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(7200, min(16497, int(1950000 / max(1.0, dur))))
+    hz = max(7200, min(16497, int(2100000 / max(1.0, dur))))
     per = round(3546895 / hz)
     ap_f = os.path.join(sd, "audio_player.i")
     open(ap_f, "w").write(re.sub(r"#\d+(\s*;\s*AUD0PER)", f"#{per}\1", re.sub(r"move\.w\s+#\d+,AUD0PER", f"move.w  #{per},AUD0PER", open(ap_f).read())))
@@ -104,7 +104,7 @@ def main():
                 if (4*math.pi*a/(pe*pe) if pe>0 else 0) > 0.89:
                     (cx, cy), rad = cv2.minEnclosingCircle(c)
                     poly = mpoly([(cx+rad*ca, cy+rad*sa) for ca, sa in c_ang], 0.1)
-                else: poly = mpoly(cv2.approxPolyDP(c, 2.0, True).reshape(-1,2), 0.25)
+                else: poly = mpoly(cv2.approxPolyDP(c, 2.4, True).reshape(-1,2), 0.25)
                 if poly: rp.append((2, poly))
         if np.any(db):
             dm = db.astype(np.uint8)*255
@@ -121,7 +121,7 @@ def main():
                 for i in sorted(range(len(cnts)), key=lambda k: deps[k]):
                     d = deps[i]
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00014 if (d&1) else 0.00014): continue
-                    pts = cv2.approxPolyDP(cnts[i], 2.0, True).reshape(-1,2)
+                    pts = cv2.approxPolyDP(cnts[i], 2.4, True).reshape(-1,2)
                     if len(pts) > 64: pts = cv2.approxPolyDP(cnts[i], 1.75, True).reshape(-1,2)
                     poly = mpoly(pts, 0.30)
                     if poly: dp.append((d&1, poly))
@@ -141,7 +141,7 @@ def main():
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
     os.chmod(exe_out, 0o755)
     sz = os.path.getsize(exe_out)
-    em = ((sz + 0x0A0000 + 0xFFFF) & ~0xFFFF)
+    em = min(0x6D0000, ((sz + 0x090000 + 0xFFFF) & ~0xFFFF))
     lo = em - sz - 256
     pr = os.path.join(od, "_tmp_pkg")
     shutil.rmtree(pr, ignore_errors=True)

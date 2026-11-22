@@ -93,7 +93,8 @@ def main():
                 db = th > 0
             if np.mean(db) > 0.62: db = ~db
         else:
-            db = gray < args.threshold
+            b_lum = np.median(np.concatenate([gray[2,:], gray[-3,:], gray[:,2], gray[:,-3]]))
+            db = (gray > args.threshold) if b_lum < 95 else (gray < args.threshold)
         dp = []
         if np.any(db):
             dm = db.astype(np.uint8) * 255
@@ -110,7 +111,7 @@ def main():
                     items.append((d, i))
                 for d, i in sorted(items):
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 5.0, True).reshape(-1, 2))
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 2.2, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

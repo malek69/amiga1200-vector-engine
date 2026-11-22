@@ -29,6 +29,8 @@ mainloop:
     bsr.w   wait_vbl
     move.l  draw_bpl2(pc),a0
     bsr.w   blit_clear_full
+    move.l  draw_bpl3(pc),a0
+    bsr.w   blit_clear_full
 
     ; Synchronizacja klatki z audio 16497 Hz: frame = (pcm_played * 10) / 5499
     move.l  vbl_tick(pc),d0

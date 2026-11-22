@@ -43,14 +43,14 @@ def main():
     ap.add_argument("--name", default="DEMO_A1200")
     ap.add_argument("--title", default="Amiga 1200 Vector Demo")
     ap.add_argument("--credits", default="Port: Amiga1200-VectorStream-Engine")
-    ap.add_argument("--fps", type=int, default=30)
+    ap.add_argument("--fps", type=int, default=18)
     ap.add_argument("--threshold", type=int, default=120)
     ap.add_argument("--thin-lines", action="store_true")
     args = ap.parse_args()
     repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", "aresample=16497:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=4500:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", "16497", os.path.join(sd, "median_audio.raw")], check=True)
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", "aresample=9600:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3200:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", "9600", os.path.join(sd, "median_audio.raw")], check=True)
     cw, ch = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     sc = min(312.0/cw, 248.0/ch)
     ox, oy = (320.0 - cw*sc)*0.5, (256.0 - ch*sc)*0.5
@@ -96,7 +96,7 @@ def main():
                 if (4*math.pi*a/(pe*pe) if pe>0 else 0) > 0.89:
                     (cx, cy), rad = cv2.minEnclosingCircle(c)
                     poly = mpoly([(cx+rad*ca, cy+rad*sa) for ca, sa in c_ang], 0.1)
-                else: poly = mpoly(cv2.approxPolyDP(c, 1.7, True).reshape(-1,2), 0.25)
+                else: poly = mpoly(cv2.approxPolyDP(c, 2.0, True).reshape(-1,2), 0.25)
                 if poly: rp.append((2, poly))
         if np.any(db):
             dm = db.astype(np.uint8)*255
@@ -113,7 +113,7 @@ def main():
                 for i in sorted(range(len(cnts)), key=lambda k: deps[k]):
                     d = deps[i]
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00014 if (d&1) else 0.00014): continue
-                    pts = cv2.approxPolyDP(cnts[i], 1.65, True).reshape(-1,2)
+                    pts = cv2.approxPolyDP(cnts[i], 2.0, True).reshape(-1,2)
                     if len(pts) > 64: pts = cv2.approxPolyDP(cnts[i], 1.75, True).reshape(-1,2)
                     poly = mpoly(pts, 0.30)
                     if poly: dp.append((d&1, poly))

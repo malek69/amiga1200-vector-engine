@@ -104,7 +104,7 @@ def main():
                 if (4*math.pi*a/(pe*pe) if pe>0 else 0) > 0.89:
                     (cx, cy), rad = cv2.minEnclosingCircle(c)
                     poly = mpoly([(cx+rad*ca, cy+rad*sa) for ca, sa in c_ang], 0.1)
-                else: poly = mpoly(cv2.approxPolyDP(c, 2.4, True).reshape(-1,2), 0.25)
+                else: poly = mpoly(cv2.approxPolyDP(c, 3.0, True).reshape(-1,2), 0.25)
                 if poly: rp.append((2, poly))
         if np.any(db):
             dm = db.astype(np.uint8)*255
@@ -120,8 +120,8 @@ def main():
                     while p != -1: deps[i] += 1; p = int(hr.item(p, 3))
                 for i in sorted(range(len(cnts)), key=lambda k: deps[k]):
                     d = deps[i]
-                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00014 if (d&1) else 0.00014): continue
-                    pts = cv2.approxPolyDP(cnts[i], 2.4, True).reshape(-1,2)
+                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00035 if (d&1) else 0.00035): continue
+                    pts = cv2.approxPolyDP(cnts[i], 3.0, True).reshape(-1,2)
                     if len(pts) > 64: pts = cv2.approxPolyDP(cnts[i], 1.75, True).reshape(-1,2)
                     poly = mpoly(pts, 0.30)
                     if poly: dp.append((d&1, poly))

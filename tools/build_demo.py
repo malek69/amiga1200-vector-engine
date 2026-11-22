@@ -53,7 +53,7 @@ def main():
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(8000, min(16497, int(1050000 / max(1.0, dur))))
+    hz = max(8000, min(16497, int(1650000 / max(1.0, dur))))
     per = round(3546895 / hz)
     hz_r = 3546895.0 / per
     spf = max(1, round(hz_r / args.fps))
@@ -83,13 +83,9 @@ def main():
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
         im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
-        g8 = cv2.GaussianBlur(cv2.cvtColor(im, cv2.COLOR_RGB2GRAY), (5, 5), 0)
-        ed = cv2.Sobel(g8, cv2.CV_16S, 1, 1, ksize=3)
-        edges = cv2.convertScaleAbs(ed) > 38
-        _, otsu = cv2.threshold(g8, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-        db = (otsu > 0) | edges
-        if np.mean(db) > 0.58: db = ~db
-        db = cv2.morphologyEx(db.astype(np.uint8)*255, cv2.MORPH_CLOSE, k3) > 0
+        r, g, b = im[:,:,0].astype(np.int16), im[:,:,1].astype(np.int16), im[:,:,2].astype(np.int16)
+        lum = cv2.medianBlur(((r*30 + g*59 + b*11)//100).astype(np.uint8), 3)
+        db = lum < args.threshold
         dp = []
         if np.any(db):
             dm = cv2.morphologyEx(db.astype(np.uint8) * 255, cv2.MORPH_OPEN, k3)
@@ -104,9 +100,9 @@ def main():
                     d, p = 0, int(hr.item(i, 3))
                     while p != -1: d += 1; p = int(hr.item(p, 3))
                     items.append((d, i))
-                for d, i in sorted(items)[:28]:
+                for d, i in sorted(items):
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 4.5, True).reshape(-1, 2))
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 2.2, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

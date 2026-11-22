@@ -66,7 +66,7 @@ def main():
     ms_p = os.path.join(sd, "main.s")
     ms_t = open(ms_p).read().replace("mulu.l  #10,d0", f"mulu.l  #{args.fps},d0").replace("divu.l  #5499,d0", f"divu.l  #{int(round(hz_r))},d0").replace("    bsr.w   apply_blitter_aa", "    ; skip AA for 50FPS speed")
     open(ms_p, "w").write(ms_t)
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"aresample={int(round(hz_r))}:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3600:w=0.7,alimiter=limit=0.82:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"lowpass=f=3200,aresample={int(round(hz_r))}:resampler=soxr,volume=0.68", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
     w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     x0, y0, cw, ch = 0, 0, w_s, h_s
     if args.crop_43 and (w_s / max(1, h_s)) > 1.5:

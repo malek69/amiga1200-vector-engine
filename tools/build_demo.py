@@ -55,8 +55,6 @@ def main():
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
     hz = max(7200, min(16497, int(2100000 / max(1.0, dur))))
     per = round(3546895 / hz)
-    ap_f = os.path.join(sd, "audio_player.i")
-    open(ap_f, "w").write(open(ap_f).read().replace("#215", f"#{per}"))
     print(f"Czas wideo: {dur:.1f}s -> Auto Audio: {hz} Hz (AUD0PER={per})", flush=True)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"aresample={hz}:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3200:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", str(hz), os.path.join(sd, "median_audio.raw")], check=True)
     cw, ch = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
@@ -104,7 +102,7 @@ def main():
                 if (4*math.pi*a/(pe*pe) if pe>0 else 0) > 0.89:
                     (cx, cy), rad = cv2.minEnclosingCircle(c)
                     poly = mpoly([(cx+rad*ca, cy+rad*sa) for ca, sa in c_ang], 0.1)
-                else: poly = mpoly(cv2.approxPolyDP(c, 3.0, True).reshape(-1,2), 0.25)
+                else: poly = mpoly(cv2.approxPolyDP(c, 4.5, True).reshape(-1,2), 0.25)
                 if poly: rp.append((2, poly))
         if np.any(db):
             dm = db.astype(np.uint8)*255
@@ -121,7 +119,7 @@ def main():
                 for i in sorted(range(len(cnts)), key=lambda k: deps[k]):
                     d = deps[i]
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00035 if (d&1) else 0.00035): continue
-                    pts = cv2.approxPolyDP(cnts[i], 3.0, True).reshape(-1,2)
+                    pts = cv2.approxPolyDP(cnts[i], 4.5, True).reshape(-1,2)
                     if len(pts) > 64: pts = cv2.approxPolyDP(cnts[i], 1.75, True).reshape(-1,2)
                     poly = mpoly(pts, 0.30)
                     if poly: dp.append((d&1, poly))

@@ -25,14 +25,3 @@ Bare-metalowy silnik demoscenowy dla **Commodore Amiga 1200 (AGA, 68020+, 2 MB C
 ## Uruchamianie (THEA1200 / FS-UAE)
 Skopiuj plik \`.lha\` z \`releases/\` lub zakladki *Releases* na pendrive USB (THEA1200) lub wskaż w FS-UAE Launcher (Amiga 1200, 68020, 8 MB Fast RAM).
 
-## Wymagania i instalacja
-1. \`vasmm68k_mot\`, \`ffmpeg\`, \`ffprobe\`
-2. Python 3: \`pip install numpy opencv-python\` (Arch: \`sudo pacman -S ffmpeg python-numpy python-opencv\`)
-
-## Uzycie
-- **Bad Apple!!:** \`python3 tools/build_demo.py --video bad_apple.mp4 --name BADAPPLE_A1200 --title "Bad Apple!! A1200" --fps 20 --threshold 128\`
-- **State of the Art (16:9 -> 4:3):** \`python3 tools/build_demo.py --video sota.mp4 --name SOTA_A1200 --title "State of the Art A1200" --fps 16 --threshold 120 --crop-43\`
-- **Median (cienkie linie):** \`python3 tools/build_demo.py --video input.mp4 --audio music.mp3 --name MEDIAN_A1200 --thin-lines\`
-
-## Uruchamianie (THEA1200 / FS-UAE)
-Skopiuj plik \`.lha\` z \`releases/\` lub zakladki *Releases* na pendrive USB (THEA1200) lub wskaż w FS-UAE Launcher (Amiga 1200, 68020, 8 MB Fast RAM).

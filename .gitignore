@@ -1,0 +1,9 @@
+_tmp*/
+*.o
+*.bak
+*.mp4
+*.mkv
+*.avi
+*.mp3
+*.wav
+__pycache__/

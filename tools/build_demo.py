@@ -59,7 +59,6 @@ def main():
     spf = max(1, round(hz_r / args.fps))
     print(f"[1/4] Audio: {hz_r:.1f} Hz (AUD0PER={per}) | Video: {args.fps} FPS ({spf} spf)", flush=True)
     ap_p = os.path.join(sd, "audio_player.i"); ap_t = open(ap_p).read(); open(ap_p, "w").write(re.sub(r"#\d+(?=,AUD)", f"#{per}", ap_t))
-", ""))
     gfx_p = os.path.join(sd, "gfx_engine.i")
     if args.fps >= 45:
         gt = open(gfx_p).read().replace("$3200", "$1200").replace("move.l  draw_bpl2(pc),a0" + chr(10) + "    bsr.w   blit_clear_full" + chr(10), "")

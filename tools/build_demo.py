@@ -53,7 +53,7 @@ def main():
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(8000, min(16497, int(1780000 / max(1.0, dur))))
+    hz = max(8000, min(16497, int(1320000 / max(1.0, dur))))
     per = round(3546895 / hz)
     hz_r = 3546895.0 / per
     spf = max(1, round(hz_r / args.fps))
@@ -110,7 +110,7 @@ def main():
                 for d, i in sorted(items):
                     if i not in top_i: continue
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 1.8, True).reshape(-1, 2))
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 2.5, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

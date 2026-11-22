@@ -53,7 +53,7 @@ def main():
     os.makedirs(od, exist_ok=True)
     MAX_BYTES = 5800000
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(7200, min(16497, int(2100000 / max(1.0, dur))))
+    hz = max(7200, min(16497, int(1600000 / max(1.0, dur))))
     per = round(3546895 / hz)
     print(f"Czas wideo: {dur:.1f}s -> Auto Audio: {hz} Hz (AUD0PER={per})", flush=True)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"aresample={hz}:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3200:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", str(hz), os.path.join(sd, "median_audio.raw")], check=True)

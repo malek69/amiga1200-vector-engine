@@ -21,7 +21,6 @@ Bare-metalowy silnik demoscenowy dla **Commodore Amiga 1200 (AGA, 68020+, 2 MB C
 
 ## Uzycie
 - **Bad Apple!!:** \`python3 tools/build_demo.py --video bad_apple.mp4 --name BADAPPLE_A1200 --title "Bad Apple!! A1200" --fps 20 --threshold 128\`
-- **State of the Art (16:9 -> 4:3):** \`python3 tools/build_demo.py --video sota.mp4 --name SOTA_A1200 --title "State of the Art A1200" --fps 16 --threshold 120 --crop-43\`
 - **Median (cienkie linie):** \`python3 tools/build_demo.py --video input.mp4 --audio music.mp3 --name MEDIAN_A1200 --thin-lines\`
 
 ## Uruchamianie (THEA1200 / FS-UAE)

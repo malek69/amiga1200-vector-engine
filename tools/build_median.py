@@ -4,13 +4,13 @@ import build_demo as bd
 vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases"
 os.makedirs(od, exist_ok=True)
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "lowpass=f=7200,aresample=16497:resampler=soxr,volume=0.68", "-f", "s8", "-ac", "1", "-ar", "16497", f"{sd}/median_audio.raw"], check=True)
-proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop='min(iw\,ih*4/3)':ih,scale=624:496:flags=bilinear,fps=30", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
-fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None
+subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=7400,aresample=16497:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "16497", f"{sd}/median_audio.raw"], check=True)
+proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop='min(iw\,ih*4/3)':ih,scale=936:744:flags=lanczos,fps=30", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+fb, uniq, fl, pr_raw, pr_lbl = 936 * 744 * 3, {}, list(), None, None
 k3 = np.ones((3, 3), dtype=np.uint8)
 def snap_poly(pts, eps):
     ap = cv2.approxPolyDP(pts, eps, True).reshape(-1, 2)
-    m = [[int(round(x * 0.5)) + 4, int(round(y * 0.5)) + 4] for x, y in ap]
+    m = [[int(round(x / 3.0)) + 4, int(round(y / 3.0)) + 4] for x, y in ap]
     for i in range(len(m)):
         x0, y0 = m[i]
         x1, y1 = m[(i + 1) % len(m)]
@@ -25,9 +25,9 @@ while True:
     raw = proc.stdout.read(fb)
     if len(raw) < fb: break
     if raw == pr_raw: fl.append(pr_lbl); continue
-    r, g, b = cv2.split(np.frombuffer(raw, dtype=np.uint8).reshape((496, 624, 3)).astype(np.int16))
+    r, g, b = cv2.split(np.frombuffer(raw, dtype=np.uint8).reshape((744, 936, 3)).astype(np.int16))
     red_m = cv2.dilate(((r > 150) & ((r - g) > 55)).astype(np.uint8) * 255, k3, iterations=1)
-    blk_m = ((r < 90) & (g < 90) & (b < 90) & (red_m == 0)).astype(np.uint8) * 255
+    blk_m = ((r < 58) & (g < 58) & (b < 58) & (red_m == 0)).astype(np.uint8) * 255
     dp = list()
     for op_base, mask in ((2, red_m), (0, blk_m)):
         if not np.any(mask): continue
@@ -40,14 +40,14 @@ while True:
             while par != -1: d += 1; par = int(hr.item(par, 3))
             items.append((d, i))
         items.sort()
-        for eps in (0.85, 1.25, 1.75):
+        for eps in (0.65, 1.0, 1.45):
             cur, v_tot = list(), 0
             for d, i in items:
                 if op_base == 2 and (d & 1): continue
-                if cv2.contourArea(cnts[i]) < (3.5 if (d % 2) else 12.0): continue
+                if cv2.contourArea(cnts[i]) < (6.0 if (d % 2) else 18.0): continue
                 poly = snap_poly(cnts[i], eps)
                 if poly: cur.append((2 if op_base == 2 else (d & 1), poly)); v_tot += len(poly)
-            if v_tot <= 1150 or eps == 1.75: dp.extend(cur); break
+            if v_tot <= 1450 or eps == 1.45: dp.extend(cur); break
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
     pr_raw, pr_lbl = raw, uniq[key]

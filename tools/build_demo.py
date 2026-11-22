@@ -82,14 +82,11 @@ def main():
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
         im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
-        r, g, b = im[:,:,0].astype(np.int16), im[:,:,1].astype(np.int16), im[:,:,2].astype(np.int16)
-        lum = cv2.medianBlur(((r*30 + g*59 + b*11)//100).astype(np.uint8), 3)
-        if int(lum.max()) - int(lum.min()) < 35:
-            db = np.zeros_like(lum, dtype=bool)
-        else:
-            _, th_img = cv2.threshold(lum, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-            db = th_img > 0
-            if np.mean(db) > 0.62: db = ~db
+        im_b = cv2.medianBlur(im, 3).astype(np.int16)
+        border = np.concatenate([im_b[2, :], im_b[-3, :], im_b[:, 2], im_b[:, -3]], axis=0)
+        bg = np.median(border, axis=0)
+        diff = np.abs(im_b - bg).sum(axis=2)
+        db = diff > 55
         dp = []
         if np.any(db):
             dm = db.astype(np.uint8) * 255

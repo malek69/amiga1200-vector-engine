@@ -52,7 +52,7 @@ def main():
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(8000, min(16497, int(1420000 / max(1.0, dur))))
+    hz = max(8000, min(16497, int(1150000 / max(1.0, dur))))
     per = round(3546895 / hz)
     hz_r = 3546895.0 / per
     spf = max(1, round(hz_r / args.fps))
@@ -86,7 +86,7 @@ def main():
         border = np.concatenate([im_b[2, :], im_b[-3, :], im_b[:, 2], im_b[:, -3]], axis=0)
         bg = np.median(border, axis=0)
         diff = np.abs(im_b - bg).sum(axis=2)
-        db = diff > 65
+        db = diff > 75
         dp = []
         if np.any(db):
             dm = db.astype(np.uint8) * 255
@@ -103,7 +103,7 @@ def main():
                     items.append((d, i))
                 for d, i in sorted(items):
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 4.2, True).reshape(-1, 2))
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 5.0, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
@@ -138,7 +138,7 @@ def main():
     lha_out = os.path.join(od, f"{fn_d}_THEA1200.lha")
     mk_lha(lha_out, pr)
     shutil.rmtree(pr)
-    print(f"GOTOWE: {exe_out} ({sz/1048576:.2f} MB) oraz {lha_out}", flush=True)
+    print(f"ExpMem: {em/1048576:.2f} MB | GOTOWE: {exe_out} ({sz/1048576:.2f} MB) oraz {lha_out}", flush=True)
     exe_out = os.path.join(od, args.name)
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
     os.chmod(exe_out, 0o755)
@@ -161,5 +161,5 @@ def main():
     lha_out = os.path.join(od, f"{fn_d}_THEA1200.lha")
     mk_lha(lha_out, pr)
     shutil.rmtree(pr)
-    print(f"GOTOWE: {exe_out} ({sz/1048576:.2f} MB) oraz {lha_out}", flush=True)
+    print(f"ExpMem: {em/1048576:.2f} MB | GOTOWE: {exe_out} ({sz/1048576:.2f} MB) oraz {lha_out}", flush=True)
 if __name__ == "__main__": main()

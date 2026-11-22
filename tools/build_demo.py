@@ -84,17 +84,13 @@ def main():
         if raw == pr_raw: fl.append(pr_lbl); continue
         im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
         im_b = cv2.medianBlur(im, 3).astype(np.int16)
-        gray = ((im_b[:,:,0]*30 + im_b[:,:,1]*59 + im_b[:,:,2]*11)//100).astype(np.uint8)
-        if args.copper_bg:
-            row_bg = np.median(im_b, axis=1, keepdims=True)
-            db = np.max(np.abs(im_b - row_bg), axis=2) > 28
-            if np.mean(db) < 0.015 and (int(gray.max()) - int(gray.min()) > 30):
-                _, th = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-                db = th > 0
-            if np.mean(db) > 0.62: db = ~db
-        else:
-            b_lum = np.median(np.concatenate([gray[2,:], gray[-3,:], gray[:,2], gray[:,-3]]))
-            db = (gray > args.threshold) if b_lum < 95 else (gray < args.threshold)
+        gray = ((im_b[:,:,0]*30 + im_b[:,:,1]*59 + im_b[:,:,2]*11)//100).astype(np.int16)
+        b_rgb = np.concatenate([im_b[4,:], im_b[-5,:], im_b[:,4], im_b[:,-5]], axis=0)
+        bg = np.median(b_rgb, axis=0)
+        bg_g = int((bg[0]*30 + bg[1]*59 + bg[2]*11)//100)
+        diff = np.abs(im_b - bg).sum(axis=2)
+        db = (diff > 48) | (np.abs(gray - bg_g) > 24)
+        if np.mean(db) > 0.65: db = ~db
         dp = []
         if np.any(db):
             dm = db.astype(np.uint8) * 255

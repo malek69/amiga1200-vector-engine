@@ -59,6 +59,11 @@ def main():
     spf = max(1, round(hz_r / args.fps))
     print(f"[1/4] Audio: {hz_r:.1f} Hz (AUD0PER={per}) | Video: {args.fps} FPS ({spf} spf)", flush=True)
     ap_p = os.path.join(sd, "audio_player.i"); ap_t = open(ap_p).read(); open(ap_p, "w").write(re.sub(r"#\d+(?=,AUD)", f"#{per}", ap_t))
+    gfx_p = os.path.join(sd, "gfx_engine.i")
+    if args.fps >= 45:
+        open(gfx_p, "w").write(open(gfx_p).read().replace("$3200", "$1200").replace("move.l  draw_bpl2(pc),a0
+    bsr.w   blit_clear_full
+", ""))
     ms_p = os.path.join(sd, "main.s")
     ms_t = open(ms_p).read().replace("mulu.l  #10,d0", f"mulu.l  #{args.fps},d0").replace("divu.l  #5499,d0", f"divu.l  #{int(round(hz_r))},d0").replace("    bsr.w   apply_blitter_aa", "    ; skip AA for 50FPS speed")
     open(ms_p, "w").write(ms_t)
@@ -70,7 +75,7 @@ def main():
         x0 = (w_s - cw) // 2
     sc = min(312.0 / cw, 248.0 / ch)
     ox, oy = (320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5
-    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},minterpolate=fps={args.fps}:mi_mode=blend", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
     fb, uniq, fl, pr_raw, pr_lbl = cw * ch * 3, {}, [], None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
     def mpoly(pts):

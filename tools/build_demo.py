@@ -53,7 +53,7 @@ def main():
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(8000, min(16497, int(1320000 / max(1.0, dur))))
+    hz = max(8000, min(16497, int(2150000 / max(1.0, dur))))
     per = round(3546895 / hz)
     hz_r = 3546895.0 / per
     spf = max(1, round(hz_r / args.fps))
@@ -66,7 +66,7 @@ def main():
     ms_p = os.path.join(sd, "main.s")
     ms_t = open(ms_p).read().replace("move.l  pcm_played(pc),d0", "move.l  vbl_tick(pc),d0").replace("mulu.l  #10,d0", "; 50Hz").replace("divu.l  #5499,d0", "; 50Hz").replace("    ; skip AA", "    ; skip AA for 50FPS speed")
     open(ms_p, "w").write(ms_t)
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"lowpass=f=3200,aresample={int(round(hz_r))}:resampler=soxr,volume=0.68", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"lowpass=f=4400,aresample={int(round(hz_r))}:resampler=soxr,volume=0.68", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
     w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     x0, y0, cw, ch = 0, 0, w_s, h_s
     if args.crop_43 and (w_s / max(1, h_s)) > 1.5:
@@ -110,7 +110,7 @@ def main():
                 for d, i in sorted(items):
                     if i not in top_i: continue
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 0.85, True).reshape(-1, 2))
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 0.70, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

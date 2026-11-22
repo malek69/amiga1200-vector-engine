@@ -58,8 +58,15 @@ draw_polygon_mode:
     cmp.w   d2,d3
     blo.w   .pa
     move.w  bbox_x1(pc),d0
+    beq.s   .bx1_ok
+    subq.w  #1,d0
+.bx1_ok:
     lsr.w   #4,d0
     move.w  bbox_x2(pc),d1
+    cmp.w   #319,d1
+    bge.s   .bx2_ok
+    addq.w  #1,d1
+.bx2_ok:
     lsr.w   #4,d1
     move.w  d1,d4
     sub.w   d0,d4

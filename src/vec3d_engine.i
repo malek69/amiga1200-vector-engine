@@ -182,8 +182,9 @@ draw_polygon_mode:
     move.w  d2,d7
     sub.w   d0,d7
     ext.l   d7
-    swap    d7
-    divs.l  d6,d7
+    lea     inv_tab(pc),a4
+    muls.l  (a4,d6.w*4),d7
+    asr.l   #6,d7
     swap    d0
     move.w  #$8000,d0
     lea     edge_buf,a0

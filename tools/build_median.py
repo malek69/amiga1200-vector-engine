@@ -7,7 +7,7 @@ os.makedirs(od, exist_ok=True)
 subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=4600,aresample=10020:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "10020", f"{sd}/median_audio.raw"], check=True)
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop=\x27min(iw\,ih*4/3)\x27:ih,scale=624:496:flags=lanczos,fps=50", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None
-k3 = np.ones((3, 3), dtype=np.uint8)
+k3, k5 = np.ones((3, 3), dtype=np.uint8), np.ones((5, 5), dtype=np.uint8)
 def snap_poly(pts, eps):
     ap = cv2.approxPolyDP(pts, eps, True).reshape(-1, 2)
     m = [[int(round(x * 0.5)) + 4, int(round(y * 0.5)) + 4] for x, y in ap]
@@ -24,10 +24,11 @@ def snap_poly(pts, eps):
 while True:
     raw = proc.stdout.read(fb)
     if len(raw) < fb: break
+    if raw == pr_raw: fl.append(pr_lbl); continue
     r, g, b = cv2.split(np.frombuffer(raw, dtype=np.uint8).reshape((496, 624, 3)).astype(np.int16))
     gray = ((r * 30 + g * 59 + b * 11) // 100).astype(np.uint8)
     red_m = cv2.dilate(((r > 150) & ((r - g) > 55)).astype(np.uint8) * 255, k3, iterations=1)
-    is_city = np.mean((gray > 45) & (gray < 175) & (red_m == 0)) > 0.22
+    is_city = np.mean((gray > 45) & (gray < 175) & (red_m == 0)) > 0.18
     if is_city:
         shade_m = ((gray > 45) & (gray < 165) & (red_m == 0)).astype(np.uint8) * 255
         blk_m = cv2.dilate(cv2.Canny(gray, 25, 75), k3, iterations=1)
@@ -48,19 +49,19 @@ while True:
             while par != -1: d += 1; par = int(hr.item(par, 3))
             items.append((d, i))
         items.sort()
-        for eps in (1.25, 1.75, 2.35):
+        for eps in (1.1, 1.6, 2.2):
             cur, v_tot = list(), 0
             for d, i in items:
                 if op_base in (2, 3) and (d % 2): continue
-                if cv2.contourArea(cnts[i]) < (2.5 if (d % 2) else 4.0): continue
+                if cv2.contourArea(cnts[i]) < (2.0 if (d % 2) else 3.5): continue
                 poly = snap_poly(cnts[i], eps)
                 if poly: cur.append((op_base if op_base in (2, 3) else (d % 2), poly)); v_tot += len(poly)
-            if v_tot <= 360 or eps == 2.35: dp.extend(cur); break
+            if v_tot <= 460 or eps == 2.2: dp.extend(cur); break
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
     pr_raw, pr_lbl = raw, uniq[key]
     fl.append(pr_lbl)
-    if len(fl) % 500 == 0: print(f"  Klatka {len(fl)}...", flush=True)
+    if len(fl) % 1000 == 0: print(f"  Klatka {len(fl)}...", flush=True)
 proc.wait()
 lines = [f"vec_frame_count: dc.w {len(fl)}", "    even", "vec_frame_table:"] + [f"    dc.l {l}" for l in fl]
 for dp, l in uniq.items():
@@ -68,7 +69,7 @@ for dp, l in uniq.items():
     for op, p in dp: lines.append(f"    dc.w {op},{len(p)}," + ",".join(f"{x},{y}" for x, y in p))
     lines.append("    dc.w -1")
 open(f"{sd}/scene_data.i", "w").write("\n".join(lines) + "\n")
-ms_t = open(f"{sd}/main.s").read().replace("divu.l  #5499,d0", "divu.l  #10020,d0").replace("; 50Hz VBL", "; 50Hz VBL")
+ms_t = open(f"{sd}/main.s").read().replace("move.l  pcm_played(pc),d0", "move.l  vbl_tick(pc),d0").replace("mulu.l  #10,d0", "; 50Hz VBL").replace("divu.l  #5499,d0", "; 50Hz VBL")
 open(f"{sd}/main.s", "w").write(ms_t)
 exe = os.path.abspath(f"{od}/MEDIAN_A1200")
 subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe], cwd=sd, check=True)
@@ -91,4 +92,4 @@ shutil.rmtree(pr)
 with zipfile.ZipFile(f"{od}/ud_mdn_a1200_retail.zip", "w", zipfile.ZIP_DEFLATED) as zf:
     zf.write(exe, "MEDIAN_A1200")
     zf.write("README.md", "README.md")
-print(f"GOTOWE: {exe} ({sz/1048576:.2f} MB) | ExpMem = {em/1048576:.2f} MB!", flush=True)
+print(f"GOTOWE: {exe} ({sz/1048576:.2f} MB) | ExpMem = {em/1048576:.2f} MB (50.00 FPS VBL-locked)!", flush=True)

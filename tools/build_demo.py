@@ -53,7 +53,7 @@ def main():
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
     os.makedirs(od, exist_ok=True)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(8000, min(16497, int(2150000 / max(1.0, dur))))
+    hz = max(8000, min(16497, int(1320000 / max(1.0, dur))))
     per = round(3546895 / hz)
     hz_r = 3546895.0 / per
     spf = max(1, round(hz_r / args.fps))
@@ -74,49 +74,48 @@ def main():
         x0 = (w_s - cw) // 2
     sc = min(312.0 / 320.0, 248.0 / 240.0) if args.fps >= 45 else min(312.0 / cw, 248.0 / ch)
     ox, oy = ((320.0 - 640.0 * sc) * 0.5, (256.0 - 480.0 * sc) * 0.5) if args.fps >= 45 else ((320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5)
-    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=640:480:flags=lanczos,fps={args.fps}" if args.fps >= 45 else f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
-    fb, uniq, fl, pr_raw, pr_lbl = (640 * 480 * 3 if args.fps >= 45 else cw * ch * 3), {}, [], None, None
+    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=312:248:flags=area,fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "gray", "-"], stdout=subprocess.PIPE)
+    fb, uniq, fl, pr_raw, pr_lbl = 312 * 248, {},, None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
-    def mpoly(pts):
-        m = []
-        for (x, y) in pts:
-            p = (int(max(3, min(316, round(ox + x * sc)))), int(max(3, min(248, round(oy + y * sc)))))
-            if not m or m[-1] != p: m.append(p)
-        while len(m) >= 3 and m[0] == m[-1]: m.pop()
-        return tuple(m) if len(m) >= 3 else None
     while True:
         raw = proc.stdout.read(fb)
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
-        im = np.frombuffer(raw, dtype=np.uint8).reshape((480, 640, 3) if args.fps >= 45 else (ch, cw, 3))
-        r, g, b = im[:,:,0].astype(np.int16), im[:,:,1].astype(np.int16), im[:,:,2].astype(np.int16)
-        lum = cv2.medianBlur(((r*30 + g*59 + b*11)//100).astype(np.uint8), 3)
-        db = lum < args.threshold
-        dp = []
+        g = np.frombuffer(raw, dtype=np.uint8).reshape((248, 312))
+        db = g < args.threshold
+        dp =
         if np.any(db):
-            dm = cv2.morphologyEx(db.astype(np.uint8) * 255, cv2.MORPH_OPEN, k3)
+            dm = db.astype(np.uint8) * 255
             if args.thin_lines:
                 th = cv2.erode(dm, k3, iterations=1)
                 dm = cv2.bitwise_or(th, cv2.subtract(dm, cv2.dilate(th, k3, iterations=1)))
             cnts, hier = cv2.findContours(dm, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             if hier is not None:
                 hr = hier.reshape(-1, 4)
-                items = []
+                items =
                 for i in range(len(cnts)):
-                    d, p = 0, int(hr.item(i, 3))
-                    while p != -1: d += 1; p = int(hr.item(p, 3))
+                    d, par = 0, int(hr.item(i, 3))
+                    while par != -1: d += 1; par = int(hr.item(par, 3))
                     items.append((d, i))
-                top_i = set(sorted(range(len(cnts)), key=lambda k: cv2.contourArea(cnts[k]), reverse=True)[:32])
-                for d, i in sorted(items):
-                    if i not in top_i: continue
-                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 0.70, True).reshape(-1, 2))
-                    if poly: dp.append((d & 1, poly))
+                items.sort()
+                for eps in (1.05, 1.55, 2.2, 3.0):
+                    dp, v_tot =, 0
+                    for d, i in items:
+                        if cv2.contourArea(cnts[i]) < (4.0 if (d & 1) else 10.0): continue
+                        pts = cv2.approxPolyDP(cnts[i], eps, True).reshape(-1, 2)
+                        m =
+                        for (x, y) in pts:
+                            pt = (int(x) + 4, int(y) + 4)
+                            if not m or m[-1] != pt: m.append(pt)
+                        while len(m) >= 3 and m == m[-1]: m.pop()
+                        if len(m) >= 3:
+                            dp.append((d & 1, tuple(m)))
+                            v_tot += len(m)
+                    if v_tot <= 550: break
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
         pr_raw, pr_lbl = raw, uniq[key]
         fl.append(pr_lbl)
-        if len(fl) % 1000 == 0: print(f"  Klatka {len(fl)}...", flush=True)
     proc.wait()
     lines = [f"vec_frame_count: dc.w {len(fl)}", "    even", "vec_frame_table:"] + [f"    dc.l {l}" for l in fl]
     for dp, l in uniq.items():

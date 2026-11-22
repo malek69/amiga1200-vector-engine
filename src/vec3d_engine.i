@@ -187,13 +187,7 @@ draw_polygon_mode:
     subq.w  #1,d6
 .sy: move.l d0,d4
     swap    d4
-    tst.w   d4
-    bpl.s   .sx0
-    moveq   #0,d4
-.sx0: cmp.w #319,d4
-    ble.s   .sx1
-    move.w  #319,d4
-.sx1: move.w d4,d5
+    move.w  d4,d5
     lsr.w   #3,d5
     not.w   d4
     and.w   #7,d4

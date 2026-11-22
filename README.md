@@ -1,5 +1,4 @@
 # Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.0 [EN / PL]
-# Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.0
 | Median A1200 v1.0 | Bad Apple!! A1200 v1.0 |
 | :---: | :---: |
 | ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |

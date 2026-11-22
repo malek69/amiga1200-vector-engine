@@ -63,7 +63,7 @@ def main():
     w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     x0, y0, cw, ch = 0, 0, w_s, h_s
     if args.crop_43 and (w_s / max(1, h_s)) > 1.5:
-        cw = int(round(h_s * 4.0 / 3.0))
+        cw = int(round(h_s * 1.28))
         x0 = (w_s - cw) // 2
     sc = min(312.0 / cw, 248.0 / ch)
     ox, oy = (320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5
@@ -84,8 +84,12 @@ def main():
         im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
         r, g, b = im[:,:,0].astype(np.int16), im[:,:,1].astype(np.int16), im[:,:,2].astype(np.int16)
         lum = cv2.medianBlur(((r*30 + g*59 + b*11)//100).astype(np.uint8), 3)
-        db = (lum < args.threshold)
-        if np.mean(db) > 0.65: db = ~db
+        if int(lum.max()) - int(lum.min()) < 35:
+            db = np.zeros_like(lum, dtype=bool)
+        else:
+            _, th_img = cv2.threshold(lum, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+            db = th_img > 0
+            if np.mean(db) > 0.62: db = ~db
         dp = []
         if np.any(db):
             dm = db.astype(np.uint8) * 255

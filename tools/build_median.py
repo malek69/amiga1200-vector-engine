@@ -29,15 +29,8 @@ while True:
     r, g, b = cv2.split(np.frombuffer(raw, dtype=np.uint8).reshape((496, 624, 3)).astype(np.int16))
     gray = ((r * 30 + g * 59 + b * 11) // 100).astype(np.uint8)
     red_m = cv2.dilate(((r > 150) & ((r - g) > 55)).astype(np.uint8) * 255, k3, iterations=1)
-    is_city = np.mean((gray > 45) & (gray < 175) & (red_m == 0)) > 0.18
-    if is_city:
-        shade_m = ((gray > 45) & (gray < 165) & (red_m == 0)).astype(np.uint8) * 255
-        blk_m = cv2.dilate(cv2.Canny(gray, 25, 75), k3, iterations=1)
-        blk_m = cv2.bitwise_and(cv2.bitwise_or(blk_m, ((gray <= 45).astype(np.uint8) * 255)), cv2.bitwise_not(red_m))
-        layers = ((2, red_m), (3, shade_m), (0, blk_m))
-    else:
-        blk_m = ((gray < 135) & (red_m == 0)).astype(np.uint8) * 255
-        layers = ((2, red_m), (0, blk_m))
+    blk_m = cv2.bitwise_and(cv2.bitwise_or(cv2.dilate(cv2.Canny(gray, 28, 80), k3, iterations=1), ((gray < 120).astype(np.uint8) * 255)), cv2.bitwise_not(red_m))
+    layers = ((2, red_m), (0, blk_m))
     dp = list()
     for op_base, mask in layers:
         if not np.any(mask): continue

@@ -232,9 +232,7 @@ blit_clear_full:
 clear_draw_bpl:
     move.l  draw_bpl1(pc),a0
     bsr.w   blit_clear_full
-    move.l  draw_bpl2(pc),a0
-    bsr.w   blit_clear_full
-    bsr.w   wait_blitter
+        bsr.w   wait_blitter
     rts
 
 apply_blitter_aa:
@@ -329,7 +327,7 @@ build_copper:
     move.l  #(COLOR01<<16)|$0111,(a0)+
     move.l  #(COLOR02<<16)|$0e11,(a0)+
     move.l  #(COLOR03<<16)|$0e11,(a0)+
-    move.l  #(COLOR04<<16)|$0888,(a0)+
+    move.l  #(COLOR04<<16)|$0999,(a0)+
     move.l  #(COLOR05<<16)|$0111,(a0)+
     move.l  #(COLOR06<<16)|$0e11,(a0)+
     move.l  #(COLOR07<<16)|$0e11,(a0)+

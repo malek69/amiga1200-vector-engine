@@ -73,7 +73,7 @@ def main():
         cw = int(round(h_s * 1.28))
         x0 = (w_s - cw) // 2
     sc = min(312.0 / 320.0, 248.0 / 240.0) if args.fps >= 45 else min(312.0 / cw, 248.0 / ch)
-    ox, oy = (320.0 - 320.0 * sc) * 0.5, (256.0 - 240.0 * sc) * 0.5 if args.fps >= 45 else (320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5
+    ox, oy = ((320.0 - 320.0 * sc) * 0.5, (256.0 - 240.0 * sc) * 0.5) if args.fps >= 45 else ((320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5)
     proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=320:240:flags=lanczos,minterpolate=fps={args.fps}:mi_mode=mci:mc_mode=obmc:me=tss" if args.fps >= 45 else f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
     fb, uniq, fl, pr_raw, pr_lbl = (320 * 240 * 3 if args.fps >= 45 else cw * ch * 3), {}, [], None, None
     k3 = np.ones((3, 3), dtype=np.uint8)

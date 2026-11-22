@@ -41,6 +41,7 @@ mainloop:
 .f_ok:
     move.w  d0,cur_frame
 
+    bsr.w   wait_blitter
     bsr.w   play_vector_frame
     lea     fast_bpl1,a0
     move.l  draw_bpl1(pc),a1

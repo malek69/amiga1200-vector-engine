@@ -1,27 +1,14 @@
 ; ============================================================================
-;  MODUL: main.s | Glowny szkielet i petla synchronizacji PAL 50Hz (68020+)
-;  KOLEJNOSC WYWOLAN:
-;    1. start -> sys_takeover (przejecie AGA, Coppera, Blittera, Pauli i IRQ)
-;    2. init_fill_lut (jednorazowa generacja tablicy 512KB XOR w Fast-RAM)
+;  MODULE: main.s | Main Entry & Locked 50.00 Hz PAL Loop (Motorola 68020+)
+;  FRAME PIPELINE:
+;    1. start -> sys_takeover (take over AGA, Copper, Blitter, Paula & IRQs)
+;    2. init_fill_lut (one-time 512 KB XOR prefix LUT generation in Fast RAM)
 ;    3. mainloop (50 Hz VBL):
-;       - wait_vbl: synchronizacja z plamka w linii Y=260
-;       - blit_clear_full: asynchroniczne czyszczenie BPL2 (czerwien)
-;       - play_vector_frame: dekodowanie klatki i rysowanie do fast_bpl1
-;       - .cp_fast / .clr_fast: 32-bitowy transfer Fast-RAM -> Chip-RAM
-;       - apply_blitter_aa: sprzetowy antyaliasing krawedzi na BPL3
-; ============================================================================
-; ============================================================================
-;  PLIK: main.s
-;  PROJEKT: Median - Amiga 1200 / THEA1200 AGA Vector Port [RETAIL VERSION]
-;  ORYGINAL: "Median" by Umlaut Design (PC / MS-DOS, 2016)
-;  PORT A1200: malek69 & Gemini AI (Vibe Coding Edition, 2026)
-; ----------------------------------------------------------------------------
-;  OPIS MODULU:
-;    - Glowny punkt wejscia programu (start) oraz przejecie systemu AmigaOS.
-;    - Petla glowna zsynchronizowana z przerwaniem VBL 50 Hz PAL:
-;      przelicza zegar VBL na dokladne 30 FPS (cur_frame = vbl_tick * 3 / 5).
-;    - Obsluga wyjscia: lewy przycisk myszy (CIAAPRA bit 6) lub klawisz ESC.
-;    - Tablica odwrotnosci inv_tab (1/dy) dla interpolacji krawedzi wielokatow.
+;       - wait_vbl: sync to raster line Y=260 & swap double-buffers
+;       - blit_clear_full: asynchronous Blitter clear of BPL2 (red plane)
+;       - play_vector_frame: decode frame stream & rasterize into fast_bpl1
+;       - .cp_fast / .clr_fast: 32-bit Fast-RAM -> Chip-RAM copy & clear
+;       - apply_blitter_aa: hardware 1px Blitter anti-aliasing into BPL3
 ; ============================================================================
 
 BPL_SIZE equ 40*256

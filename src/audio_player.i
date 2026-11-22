@@ -1,10 +1,13 @@
 ; ============================================================================
-;  MODUL: audio_player.i | 4-kanalowy sterownik audio DMA Paula (IRQ Level 4)
-;  PROCEDURY:
-;    - ; --- setup_paula: Wylacza filtr LED ($bfe001) i startuje 4 kanaly DMA Pauli (IRQ4) ---
+;  MODULE: audio_player.i | 4-Channel Paula DMA Audio Driver (Level 4 IRQ)
+;  SUBROUTINES:
+;    - setup_paula: disable hardware LED low-pass filter (CIAAPRA bit 1),
+;      init dual 2048 B Chip-RAM buffers, and start 4-channel Paula DMA
+;    - aud0_irq_handler: Level 4 IRQ refilling next PCM chunk from Fast RAM
+; ============================================================================
 setup_paula: wylacza sprzetowy filtr LED (CIAAPRA bit 1), inicjuje
 ;      podwojne bufory Chip-RAM (2048 B) i uruchamia 4 kanaly DMA Pauli
-;    - ; --- aud0_irq_handler: Przerwanie Level 4 podmieniajace bufor PCM 2048 B ---
+;    - ; --- aud0_irq_handler: Level 4 IRQ swapping next 2048 B PCM buffer ---
 aud0_irq_handler: przerwanie Level 4 uzupelniajace kolejny blok PCM
 ; ============================================================================
 ; ============================================================================

@@ -1,15 +1,20 @@
 ; ============================================================================
-;  MODUL: gfx_engine.i | Podsystem AGA, Copper i sprzetowy Blitter AA
-;  PROCEDURY:
-;    - ; --- sys_takeover: Wylacza OS DMA/IRQ, przejmuje AGA ($dff000) i ustawia 320x256 PAL ---
+;  MODULE: gfx_engine.i | AGA Chipset, Copperlist & Hardware Blitter AA
+;  SUBROUTINES:
+;    - sys_takeover: disable AmigaOS DMA/IRQs, init 320x256 PAL (3 bitplanes)
+;    - setup_copper: build dynamic Copperlist & AGA palette (COLOR00..07)
+;    - wait_vbl: wait for PAL raster line Y=260 and swap screen bitplanes
+;    - blit_clear_full: clear Chip-RAM bitplane (10240 B at a0) via Blitter
+;    - apply_blitter_aa: 1px horizontal/vertical edge smoothing into BPL3
+; ============================================================================
 sys_takeover: wylacza DMA/IRQ AmigaOS, ustawia 320x256 PAL (3 bitplany)
-;    - ; --- setup_copper: Buduje Copperliste (BPL1-3 pointers + paleta AGA COLOR00..07) ---
+;    - ; --- setup_copper: Build Copperlist (BPL1-3 pointers + AGA palette COLOR00..07) ---
 setup_copper: buduje dynamiczna Copperliste i palete AGA (COLOR00..07)
-;    - ; --- wait_vbl: Synchronizacja z linia Y=260 PAL (50 Hz) + zamiana buforow ekranu ---
+;    - ; --- wait_vbl: Sync to PAL raster line Y=260 (50 Hz) & swap screen buffers ---
 wait_vbl: czeka na koniec ramki PAL i przelacza podwojne bufory ekranu
-;    - ; --- blit_clear_full: Sprzetowe czyszczenie bitplanu 10240 B (a0) przez Blitter ---
+;    - ; --- blit_clear_full: Hardware clear of 10240 B bitplane (a0) via Blitter ---
 blit_clear_full: czysci bitplan Chip-RAM (10240 B) przez Blitter
-;    - ; --- apply_blitter_aa: Antyaliasing 1px na BPL3 (BLTCON0=$1dfc, D = A | B) ---
+;    - ; --- apply_blitter_aa: 1px hardware anti-aliasing into BPL3 (BLTCON0=$1dfc, D=A|B) ---
 apply_blitter_aa: generuje 1-pikselowe wygładzanie krawedzi na BPL3
 ; ============================================================================
 ; ============================================================================

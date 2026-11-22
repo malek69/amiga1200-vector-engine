@@ -111,7 +111,7 @@ def main():
                     items.append((d, i))
                 for d, i in sorted(items):
                     if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00008 if (d&1) else 0.00025): continue
-                    poly = mpoly(cv2.approxPolyDP(cnts[i], 2.2, True).reshape(-1, 2))
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 3.5, True).reshape(-1, 2))
                     if poly: dp.append((d & 1, poly))
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"

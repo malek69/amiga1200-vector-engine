@@ -326,10 +326,10 @@ build_copper:
     move.l  #(COLOR00<<16)|$0eee,(a0)+
     move.l  #(COLOR01<<16)|$0111,(a0)+
     move.l  #(COLOR02<<16)|$0e11,(a0)+
-    move.l  #(COLOR03<<16)|$0e11,(a0)+
+    move.l  #(COLOR03<<16)|$0111,(a0)+
     move.l  #(COLOR04<<16)|$0ccc,(a0)+
     move.l  #(COLOR05<<16)|$0111,(a0)+
     move.l  #(COLOR06<<16)|$0e11,(a0)+
-    move.l  #(COLOR07<<16)|$0e11,(a0)+
+    move.l  #(COLOR07<<16)|$0111,(a0)+
     move.l  #$fffffffe,(a0)+
     rts

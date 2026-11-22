@@ -77,7 +77,7 @@ def main():
     proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=640:480:flags=lanczos,fps={args.fps}" if args.fps >= 45 else f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
     fb, uniq, fl, pr_raw, pr_lbl = (640 * 480 * 3 if args.fps >= 45 else cw * ch * 3), {}, [], None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
-    def mpoly(pts, 0.15):
+    def mpoly(pts):
         m = []
         for (x, y) in pts:
             p = (int(max(3, min(316, round(ox + x * sc)))), int(max(3, min(248, round(oy + y * sc)))))

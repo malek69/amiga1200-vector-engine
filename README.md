@@ -18,3 +18,8 @@
 ## Engine Modules (`src/`)
 - `main.s` (50Hz VBL loop & Fast->Chip copy) | `gfx_engine.i` (AGA takeover, Copper, Blitter AA) | `vec3d_engine.i` (N-gon LUT rasterizer)
 - `scene_player.i` (frame stream decoder) | `audio_player.i` (4CH Paula DMA, LED filter off) | `whdload_slave.s` (Kickstart-free loader)
+
+## Engine v1.0 Technical Overview
+- **Full Specification:** See [docs/ENGINE_v1.0.md](docs/ENGINE_v1.0.md) for memory map, custom chip registers, and LUT math.
+- **50.00 Hz PAL Loop:** `wait_vbl` -> `blit_clear_full (BPL2)` -> `play_vector_frame` -> `draw_polygon_mode (Fast-RAM LUT)` -> `32-bit Fast->Chip Copy` -> `apply_blitter_aa (BPL3)`.
+- **Memory Footprint:** ~66 KB Chip RAM + ~545 KB Fast RAM workspace + vector/audio stream (fits in stock A1200 + 8 MB Fast RAM).

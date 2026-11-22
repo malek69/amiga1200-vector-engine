@@ -1,8 +1,10 @@
 ; ============================================================================
 ;  MODUL: vec3d_engine.i | Rasteryzator wielokatow N-katnych (Fast-RAM LUT)
 ;  PROCEDURY:
-;    - init_fill_lut: buduje w Fast-RAM tablice prefiksowa 512 KB dla parzystosci XOR
-;    - draw_polygon_mode: przycinanie krawedzi (0..319 x 0..255), interpolacja
+;    - ; --- init_fill_lut: Generuje 512 KB tablice prefiksowa XOR w Fast-RAM (65536x8B) ---
+init_fill_lut: buduje w Fast-RAM tablice prefiksowa 512 KB dla parzystosci XOR
+;    - ; --- draw_polygon_mode: Clipping 320x256, krok X (inv_tab) i wypelnianie scanline ---
+draw_polygon_mode: przycinanie krawedzi (0..319 x 0..255), interpolacja
 ;      kroku X przy uzyciu tablicy odwrotnosci inv_tab oraz wypelnianie
 ;      poziomych linii (tryb 0: czern BPL1, tryb 1: wyciecie otworu, tryb 2: BPL2)
 ; ============================================================================

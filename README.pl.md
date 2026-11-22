@@ -17,3 +17,8 @@
 ## Moduły silnika (`src/`)
 - `main.s` (pętla 50Hz VBL i transfer Fast->Chip) | `gfx_engine.i` (AGA, Copper, Blitter AA) | `vec3d_engine.i` (rasteryzator wielokątów LUT)
 - `scene_player.i` (dekoder klatek) | `audio_player.i` (4CH Paula DMA, filtr LED wył.) | `whdload_slave.s` (loader bez Kickstart ROM)
+
+## Specyfikacja Silnika v1.0
+- **Pełna dokumentacja techniczna:** Zobacz [docs/ENGINE_v1.0.md](docs/ENGINE_v1.0.md) (mapa pamięci, rejestry AGA/Blitter/Paula, matematyka LUT).
+- **Pętla 50.00 Hz PAL:** `wait_vbl` -> `blit_clear_full (BPL2)` -> `play_vector_frame` -> `draw_polygon_mode (LUT w Fast-RAM)` -> `kopia 32-bit Fast->Chip` -> `apply_blitter_aa (BPL3)`.
+- **Zapotrzebowanie pamięci:** ~66 KB Chip RAM + ~545 KB obszaru roboczego Fast RAM + strumień A/V (mieści się w A1200 + 8 MB Fast RAM).

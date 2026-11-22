@@ -1,7 +1,8 @@
 ; ============================================================================
 ;  MODUL: scene_player.i | Dekoder strumienia klatek wektorowych
 ;  PROCEDURY:
-;    - play_vector_frame: pobiera wskaznik klatki z vec_frame_table[cur_frame],
+;    - ; --- play_vector_frame: Dekoder klatki z vec_frame_table + aktualizacja Coppera ---
+play_vector_frame: pobiera wskaznik klatki z vec_frame_table[cur_frame],
 ;      aktualizuje kolor pierwszoplanowy w Copperze i wywoluje draw_polygon_mode
 ; ============================================================================
 ; ============================================================================

@@ -1,11 +1,16 @@
 ; ============================================================================
 ;  MODUL: gfx_engine.i | Podsystem AGA, Copper i sprzetowy Blitter AA
 ;  PROCEDURY:
-;    - sys_takeover: wylacza DMA/IRQ AmigaOS, ustawia 320x256 PAL (3 bitplany)
-;    - setup_copper: buduje dynamiczna Copperliste i palete AGA (COLOR00..07)
-;    - wait_vbl: czeka na koniec ramki PAL i przelacza podwojne bufory ekranu
-;    - blit_clear_full: czysci bitplan Chip-RAM (10240 B) przez Blitter
-;    - apply_blitter_aa: generuje 1-pikselowe wygładzanie krawedzi na BPL3
+;    - ; --- sys_takeover: Wylacza OS DMA/IRQ, przejmuje AGA ($dff000) i ustawia 320x256 PAL ---
+sys_takeover: wylacza DMA/IRQ AmigaOS, ustawia 320x256 PAL (3 bitplany)
+;    - ; --- setup_copper: Buduje Copperliste (BPL1-3 pointers + paleta AGA COLOR00..07) ---
+setup_copper: buduje dynamiczna Copperliste i palete AGA (COLOR00..07)
+;    - ; --- wait_vbl: Synchronizacja z linia Y=260 PAL (50 Hz) + zamiana buforow ekranu ---
+wait_vbl: czeka na koniec ramki PAL i przelacza podwojne bufory ekranu
+;    - ; --- blit_clear_full: Sprzetowe czyszczenie bitplanu 10240 B (a0) przez Blitter ---
+blit_clear_full: czysci bitplan Chip-RAM (10240 B) przez Blitter
+;    - ; --- apply_blitter_aa: Antyaliasing 1px na BPL3 (BLTCON0=$1dfc, D = A | B) ---
+apply_blitter_aa: generuje 1-pikselowe wygładzanie krawedzi na BPL3
 ; ============================================================================
 ; ============================================================================
 ;  PLIK: gfx_engine.i

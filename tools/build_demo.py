@@ -1,0 +1,167 @@
+import argparse, math, os, re, shutil, struct, subprocess, cv2, numpy as np
+def mk_ico(it, dt=None, tt=None):
+    ih = struct.pack(">hhhhhIbbI", 0, 0, 48, 24, 1, 0, 1, 0, 0)
+    pl = bytearray(144)
+    dh = bytearray(78)
+    struct.pack_into(">HHhhhhHBIIiiI", dh, 0, 0xe310, 1, 20, 20, 48, 24, 0, it, 1 if dt else 0, 1 if tt else 0, -2147483648, -2147483648, 4096)
+    out = bytearray(dh) + (bytearray(56) if it == 2 else bytearray()) + ih + pl
+    bs = lambda s: struct.pack(">I", len(s)+1) + s.encode("ascii") + bytes([0])
+    if dt: out += bs(dt)
+    if tt:
+        out += struct.pack(">I", (len(tt)+1)*4)
+        for t in tt: out += bs(t)
+    return bytes(out)
+def mk_lha(lp, rf):
+    def crc(d):
+        c = 0
+        for b in d:
+            c ^= b
+            for _ in range(8): c = (c >> 1) ^ 0xa001 if (c & 1) else (c >> 1)
+        return c & 0xffff
+    ar = bytearray()
+    for dp, _, fns in os.walk(rf):
+        rd = os.path.relpath(dp, rf)
+        for fn in sorted(fns):
+            p = open(os.path.join(dp, fn), "rb").read()
+            fb = fn.encode("ascii")
+            et = (bytearray([2]) + bytes([255]).join(x.encode("ascii") for x in rd.split(os.sep)) + bytes([255, 0, 0])) if rd != "." else bytearray()
+            hb = bytearray(b"-lh0-") + struct.pack("<IIIB", len(et)+len(p), len(p), 0x56750000, 0x20) + bytes([1, len(fb)]) + fb + struct.pack("<HBH", crc(p), 65, len(et))
+            ar += bytes([len(hb), sum(hb)&0xff]) + hb + et + p
+    open(lp, "wb").write(ar + bytes([0]))
+def get_hunk_layout(ep):
+    d = open(ep, "rb").read()
+    n, = struct.unpack_from(">I", d, 8)
+    fb = 0
+    for i in range(n):
+        sf, = struct.unpack_from(">I", d, 20 + i * 4)
+        if not (sf & 0x40000000): fb += ((sf & 0x3FFFFFFF) * 4 + 16) & ~0xF
+    return fb
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--video", required=True)
+    ap.add_argument("--audio", default=None)
+    ap.add_argument("--name", default="DEMO_A1200")
+    ap.add_argument("--title", default="Amiga 1200 Vector Demo")
+    ap.add_argument("--credits", default="Port: malek69")
+    ap.add_argument("--fps", type=int, default=16)
+    ap.add_argument("--threshold", type=int, default=120)
+    ap.add_argument("--crop-43", action="store_true")
+    ap.add_argument("--thin-lines", action="store_true")
+    args = ap.parse_args()
+    repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases")
+    os.makedirs(od, exist_ok=True)
+    dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
+    hz = max(8000, min(16497, int(1850000 / max(1.0, dur))))
+    per = round(3546895 / hz)
+    hz_r = 3546895.0 / per
+    spf = max(1, round(hz_r / args.fps))
+    print(f"[1/4] Audio: {hz_r:.1f} Hz (AUD0PER={per}) | Video: {args.fps} FPS ({spf} spf)", flush=True)
+    ap_p = os.path.join(sd, "audio_player.i")
+    open(ap_p, "w").write(re.sub(r"move\.w\s+#\d+,AUD(\d)PER", rf"move.w  #{per},AUD\1PER", open(ap_p).read()))
+    ms_p = os.path.join(sd, "main.s")
+    open(ms_p, "w").write(re.sub(r"cmp\.l\s+#\d+,d0", f"cmp.l   #{spf},d0", open(ms_p).read(), count=1))
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"aresample={int(round(hz_r))}:resampler=soxr,bass=g=4:f=65:w=0.6,treble=g=3:f=3600:w=0.7,alimiter=limit=0.96:attack=3:release=40", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
+    w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
+    x0, y0, cw, ch = 0, 0, w_s, h_s
+    if args.crop_43 and (w_s / max(1, h_s)) > 1.5:
+        cw = int(round(h_s * 4.0 / 3.0))
+        x0 = (w_s - cw) // 2
+    sc = min(312.0 / cw, 248.0 / ch)
+    ox, oy = (320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5
+    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+    fb, uniq, fl, pr_raw, pr_lbl = cw * ch * 3, {}, [], None, None
+    k3 = np.ones((3, 3), dtype=np.uint8)
+    def mpoly(pts):
+        m = []
+        for (x, y) in pts:
+            p = (int(max(3, min(316, round(ox + x * sc)))), int(max(3, min(248, round(oy + y * sc)))))
+            if not m or m[-1] != p: m.append(p)
+        while len(m) >= 3 and m[0] == m[-1]: m.pop()
+        return tuple(m) if len(m) >= 3 else None
+    while True:
+        raw = proc.stdout.read(fb)
+        if len(raw) < fb: break
+        if raw == pr_raw: fl.append(pr_lbl); continue
+        im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
+        r, g, b = im[:,:,0].astype(np.int16), im[:,:,1].astype(np.int16), im[:,:,2].astype(np.int16)
+        lum = cv2.medianBlur(((r*30 + g*59 + b*11)//100).astype(np.uint8), 3)
+        db = (lum < args.threshold)
+        if np.mean(db) > 0.65: db = ~db
+        dp = []
+        if np.any(db):
+            dm = db.astype(np.uint8) * 255
+            if args.thin_lines:
+                th = cv2.erode(dm, k3, iterations=1)
+                dm = cv2.bitwise_or(th, cv2.subtract(dm, cv2.dilate(th, k3, iterations=1)))
+            cnts, hier = cv2.findContours(dm, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            if hier is not None:
+                hr = hier.reshape(-1, 4)
+                items = []
+                for i in range(len(cnts)):
+                    d, p = 0, int(hr.item(i, 3))
+                    while p != -1: d += 1; p = int(hr.item(p, 3))
+                    items.append((d, i))
+                for d, i in sorted(items):
+                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.00004 if (d&1) else 0.00014): continue
+                    poly = mpoly(cv2.approxPolyDP(cnts[i], 2.2, True).reshape(-1, 2))
+                    if poly: dp.append((d & 1, poly))
+        key = tuple(dp)
+        if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
+        pr_raw, pr_lbl = raw, uniq[key]
+        fl.append(pr_lbl)
+    proc.wait()
+    lines = [f"vec_frame_count: dc.w {len(fl)}", "    even", "vec_frame_table:"] + [f"    dc.l {l}" for l in fl]
+    for dp, l in uniq.items():
+        lines += [f"{l}:", "    dc.w $0111"]
+        for op, p in dp: lines.append(f"    dc.w {op},{len(p)}," + ",".join(f"{x},{y}" for x, y in p))
+        lines.append("    dc.w -1")
+    open(os.path.join(sd, "scene_data.i"), "w").write(chr(10).join(lines) + chr(10))
+    exe_out = os.path.join(od, args.name)
+    subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
+    os.chmod(exe_out, 0o755)
+    sz = os.path.getsize(exe_out)
+    lo = (get_hunk_layout(exe_out) + 0x2000) & ~0xF
+    em = ((lo + sz + 0x4000 + 0xFFFF) & ~0xFFFF)
+    pr = os.path.join(od, "_tmp_pkg")
+    shutil.rmtree(pr, ignore_errors=True)
+    fn_d = args.name.title().replace("_", "")
+    pd = os.path.join(pr, fn_d)
+    os.makedirs(pd, exist_ok=True)
+    shutil.copy2(exe_out, os.path.join(pd, args.name))
+    sl = open(os.path.join(sd, "whdload_slave.s")).read().replace("{EXP_MEM}", f"{em:08x}").replace("{LOAD_OFF}", f"{lo:08x}").replace("{DEMO_TITLE}", args.title).replace("{DEMO_CREDITS}", args.credits).replace("{EXE_NAME}", args.name)
+    ss = os.path.join(pr, "slave.s")
+    open(ss, "w").write(sl)
+    subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")], check=True)
+    os.remove(ss)
+    open(os.path.join(pr, f"{fn_d}.info"), "wb").write(mk_ico(2))
+    open(os.path.join(pd, f"{fn_d}.info"), "wb").write(mk_ico(4, "WHDLoad", [f"SLAVE={fn_d}.slave"]))
+    lha_out = os.path.join(od, f"{fn_d}_THEA1200.lha")
+    mk_lha(lha_out, pr)
+    shutil.rmtree(pr)
+    print(f"GOTOWE: {exe_out} ({sz/1048576:.2f} MB) oraz {lha_out}", flush=True)
+if __name__ == "__main__": main()
+    exe_out = os.path.join(od, args.name)
+    subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
+    os.chmod(exe_out, 0o755)
+    sz = os.path.getsize(exe_out)
+    lo = (get_hunk_layout(exe_out) + 0x2000) & ~0xF
+    em = ((lo + sz + 0x4000 + 0xFFFF) & ~0xFFFF)
+    pr = os.path.join(od, "_tmp_pkg")
+    shutil.rmtree(pr, ignore_errors=True)
+    fn_d = args.name.title().replace("_", "")
+    pd = os.path.join(pr, fn_d)
+    os.makedirs(pd, exist_ok=True)
+    shutil.copy2(exe_out, os.path.join(pd, args.name))
+    sl = open(os.path.join(sd, "whdload_slave.s")).read().replace("{EXP_MEM}", f"{em:08x}").replace("{LOAD_OFF}", f"{lo:08x}").replace("{DEMO_TITLE}", args.title).replace("{DEMO_CREDITS}", args.credits).replace("{EXE_NAME}", args.name)
+    ss = os.path.join(pr, "slave.s")
+    open(ss, "w").write(sl)
+    subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")], check=True)
+    os.remove(ss)
+    open(os.path.join(pr, f"{fn_d}.info"), "wb").write(mk_ico(2))
+    open(os.path.join(pd, f"{fn_d}.info"), "wb").write(mk_ico(4, "WHDLoad", [f"SLAVE={fn_d}.slave"]))
+    lha_out = os.path.join(od, f"{fn_d}_THEA1200.lha")
+    mk_lha(lha_out, pr)
+    shutil.rmtree(pr)
+    print(f"GOTOWE: {exe_out} ({sz/1048576:.2f} MB) oraz {lha_out}", flush=True)
+if __name__ == "__main__": main()

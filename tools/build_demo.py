@@ -83,10 +83,14 @@ def main():
         if raw == pr_raw: fl.append(pr_lbl); continue
         im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
         im_b = cv2.medianBlur(im, 3).astype(np.int16)
-        border = np.concatenate([im_b[2, :], im_b[-3, :], im_b[:, 2], im_b[:, -3]], axis=0)
-        bg = np.median(border, axis=0)
-        diff = np.abs(im_b - bg).sum(axis=2)
-        db = diff > 75
+        row_bg = np.median(im_b, axis=1, keepdims=True)
+        db = np.max(np.abs(im_b - row_bg), axis=2) > 28
+        if np.mean(db) < 0.015:
+            gray = ((im_b[:,:,0]*30 + im_b[:,:,1]*59 + im_b[:,:,2]*11)//100).astype(np.uint8)
+            if int(gray.max()) - int(gray.min()) > 30:
+                _, th = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+                db = th > 0
+        if np.mean(db) > 0.62: db = ~db
         dp = []
         if np.any(db):
             dm = db.astype(np.uint8) * 255

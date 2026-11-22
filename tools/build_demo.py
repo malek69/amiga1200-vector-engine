@@ -84,7 +84,7 @@ def main():
         im = np.frombuffer(raw, dtype=np.uint8).reshape((ch, cw, 3))
         r, g, b = im[:,:,0].astype(np.int16), im[:,:,1].astype(np.int16), im[:,:,2].astype(np.int16)
         rm = ((r>135)&((r-g)>40)&((r-b)>40)).astype(np.uint8)*255
-        lum = ((r*30+g*59+b*11)//100).astype(np.uint8)
+        lum = cv2.medianBlur(((r*30+g*59+b*11)//100).astype(np.uint8), 3)
         db = (lum < args.threshold) & (~(((r-g)>20)|((r-b)>20)))
         c01 = (min(13, max(1, int(lum[db].mean())>>4))*0x111) if np.any(db) else 0x0111
         rp, dp = [], []
@@ -112,7 +112,7 @@ def main():
                     while p != -1: deps[i] += 1; p = int(hr.item(p, 3))
                 for i in sorted(range(len(cnts)), key=lambda k: deps[k]):
                     d = deps[i]
-                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.000004 if (d&1) else 0.000035): continue
+                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.000004 if (d&1) else 0.000085): continue
                     pts = cv2.approxPolyDP(cnts[i], 1.15, True).reshape(-1,2)
                     if len(pts) > 64: pts = cv2.approxPolyDP(cnts[i], 1.75, True).reshape(-1,2)
                     poly = mpoly(pts, 0.30)
@@ -133,7 +133,7 @@ def main():
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
     os.chmod(exe_out, 0o755)
     sz = os.path.getsize(exe_out)
-    em = ((sz + 0x0C0000 + 0xFFFF) & ~0xFFFF)
+    em = min(0x750000, ((sz + 0x090000 + 0xFFFF) & ~0xFFFF))
     lo = em - sz - 256
     pr = os.path.join(od, "_tmp_pkg")
     shutil.rmtree(pr, ignore_errors=True)

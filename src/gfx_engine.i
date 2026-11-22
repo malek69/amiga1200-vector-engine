@@ -241,15 +241,17 @@ apply_blitter_aa:
     move.l  a0,a1
     add.w   #40,a1
     move.l  draw_bpl3(pc),a2
-    move.w  #$1dfc,BLTCON0(a5)
+    move.w  #$1ffe,BLTCON0(a5)
     move.w  #$0000,BLTCON1(a5)
     move.w  #$ffff,BLTAFWM(a5)
     move.w  #$ffff,BLTALWM(a5)
     move.w  #0,BLTAMOD(a5)
     move.w  #0,BLTBMOD(a5)
+    move.w  #0,BLTCMOD(a5)
     move.w  #0,BLTDMOD(a5)
     move.l  a0,BLTAPTH(a5)
     move.l  a1,BLTBPTH(a5)
+    move.l  a2,BLTCPTH(a5)
     move.l  a2,BLTDPTH(a5)
     move.w  #(255<<6)|20,BLTSIZE(a5)
     bsr.w   wait_blitter
@@ -327,7 +329,7 @@ build_copper:
     move.l  #(COLOR01<<16)|$0111,(a0)+
     move.l  #(COLOR02<<16)|$0e11,(a0)+
     move.l  #(COLOR03<<16)|$0111,(a0)+
-    move.l  #(COLOR04<<16)|$0999,(a0)+
+    move.l  #(COLOR04<<16)|$0aaa,(a0)+
     move.l  #(COLOR05<<16)|$0111,(a0)+
     move.l  #(COLOR06<<16)|$0e11,(a0)+
     move.l  #(COLOR07<<16)|$0111,(a0)+

@@ -65,7 +65,7 @@ mainloop:
     move.l  d1,(a0)+
     move.l  d1,(a0)+
     dbf     d0,.clr_fast
-    ; 4-shade AGA mode (BPL3 = wall shading)
+    bsr.w   apply_blitter_aa
 
     btst    #6,CIAAPRA
     beq.s   shutdown

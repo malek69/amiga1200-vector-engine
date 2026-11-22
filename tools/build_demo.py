@@ -96,7 +96,7 @@ def main():
                 if (4*math.pi*a/(pe*pe) if pe>0 else 0) > 0.89:
                     (cx, cy), rad = cv2.minEnclosingCircle(c)
                     poly = mpoly([(cx+rad*ca, cy+rad*sa) for ca, sa in c_ang], 0.1)
-                else: poly = mpoly(cv2.approxPolyDP(c, 1.2, True).reshape(-1,2), 0.25)
+                else: poly = mpoly(cv2.approxPolyDP(c, 1.7, True).reshape(-1,2), 0.25)
                 if poly: rp.append((2, poly))
         if np.any(db):
             dm = db.astype(np.uint8)*255
@@ -112,8 +112,8 @@ def main():
                     while p != -1: deps[i] += 1; p = int(hr.item(p, 3))
                 for i in sorted(range(len(cnts)), key=lambda k: deps[k]):
                     d = deps[i]
-                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.000004 if (d&1) else 0.000085): continue
-                    pts = cv2.approxPolyDP(cnts[i], 1.15, True).reshape(-1,2)
+                    if cv2.contourArea(cnts[i]) < (cw*ch)*(0.000035 if (d&1) else 0.00012): continue
+                    pts = cv2.approxPolyDP(cnts[i], 1.65, True).reshape(-1,2)
                     if len(pts) > 64: pts = cv2.approxPolyDP(cnts[i], 1.75, True).reshape(-1,2)
                     poly = mpoly(pts, 0.30)
                     if poly: dp.append((d&1, poly))
@@ -133,7 +133,7 @@ def main():
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
     os.chmod(exe_out, 0o755)
     sz = os.path.getsize(exe_out)
-    em = min(0x750000, ((sz + 0x090000 + 0xFFFF) & ~0xFFFF))
+    em = ((sz + 0x0A0000 + 0xFFFF) & ~0xFFFF)
     lo = em - sz - 256
     pr = os.path.join(od, "_tmp_pkg")
     shutil.rmtree(pr, ignore_errors=True)
@@ -147,7 +147,7 @@ def main():
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")], check=True)
     os.remove(ss)
     open(os.path.join(pr, f"{fn_d}.info"), "wb").write(mk_ico(2))
-    open(os.path.join(pd, f"{fn_d}.info"), "wb").write(mk_ico(4, "WHDLoad", [f"SLAVE={fn_d}.slave"]))
+    open(os.path.join(pd, f"{fn_d}.info"), "wb").write(mk_ico(4, "WHDLoad", [f"SLAVE={fn_d}.slave", "NoPreload"]))
     mk_lha(os.path.join(od, f"{fn_d}_THEA1200.lha"), pr)
     shutil.rmtree(pr)
     print(f"GOTOWE: {exe_out} oraz {fn_d}_THEA1200.lha", flush=True)

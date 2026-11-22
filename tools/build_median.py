@@ -8,6 +8,7 @@ subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpas
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", "crop='min(iw\,ih*4/3)':ih,scale=936:744:flags=lanczos,fps=30", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 936 * 744 * 3, {}, list(), None, None
 k3 = np.ones((3, 3), dtype=np.uint8)
+k5 = np.ones((5, 5), dtype=np.uint8)
 def snap_poly(pts, eps):
     ap = cv2.approxPolyDP(pts, eps, True).reshape(-1, 2)
     m = [[int(round(x / 3.0)) + 4, int(round(y / 3.0)) + 4] for x, y in ap]
@@ -29,9 +30,9 @@ while True:
     red_m = cv2.dilate(((r > 150) & ((r - g) > 55)).astype(np.uint8) * 255, k3, iterations=1)
     gray = ((r * 30 + g * 59 + b * 11) // 100).astype(np.uint8)
     dark_ratio = np.mean((gray < 110) & (red_m == 0))
-    if dark_ratio > 0.30:
+    if dark_ratio > 0.16:
         walls = ((gray < 95) & (red_m == 0)).astype(np.uint8) * 255
-        edges = cv2.morphologyEx(walls, cv2.MORPH_GRADIENT, k3)
+        edges = cv2.morphologyEx(walls, cv2.MORPH_GRADIENT, k5)
         deep = ((gray < 28) & (red_m == 0)).astype(np.uint8) * 255
         blk_m = cv2.bitwise_or(edges, deep)
     else:
@@ -52,10 +53,10 @@ while True:
             cur, v_tot = list(), 0
             for d, i in items:
                 if op_base == 2 and (d & 1): continue
-                if cv2.contourArea(cnts[i]) < (8.0 if (d % 2) else 14.0): continue
+                if cv2.contourArea(cnts[i]) < (1.5 if (d % 2) else 2.5): continue
                 poly = snap_poly(cnts[i], eps)
                 if poly: cur.append((2 if op_base == 2 else (d & 1), poly)); v_tot += len(poly)
-            if v_tot <= 820 or eps == 2.0: dp.extend(cur); break
+            if v_tot <= 920 or eps == 2.0: dp.extend(cur); break
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
     pr_raw, pr_lbl = raw, uniq[key]

@@ -74,7 +74,7 @@ def main():
         x0 = (w_s - cw) // 2
     sc = min(312.0 / cw, 248.0 / ch)
     ox, oy = (320.0 - cw * sc) * 0.5, (256.0 - ch * sc) * 0.5
-    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},minterpolate=fps={args.fps}:mi_mode=mci:mc_mode=obmc:me=epzs" if args.fps >= 45 else f"crop={cw}:{ch}:{x0}:{y0},fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
     fb, uniq, fl, pr_raw, pr_lbl = cw * ch * 3, {}, [], None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
     def mpoly(pts):

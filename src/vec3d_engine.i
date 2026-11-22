@@ -73,7 +73,7 @@ draw_polygon_mode:
     lea     edge_buf,a0
     add.l   d6,a0
     move.w  (sp)+,d0
-    move.l  draw_bpl1(pc),a2
+    lea     fast_bpl1,a2
     cmp.w   #2,d0
     bne.s   .to
     move.l  draw_bpl2(pc),a2

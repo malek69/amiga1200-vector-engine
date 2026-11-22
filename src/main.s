@@ -27,7 +27,6 @@ start:
 
 mainloop:
     bsr.w   wait_vbl
-    bsr.w   clear_draw_bpl
 
     ; Synchronizacja klatki z audio 16497 Hz: frame = (pcm_played * 10) / 5499
     move.l  pcm_played(pc),d0
@@ -41,6 +40,19 @@ mainloop:
     move.w  d0,cur_frame
 
     bsr.w   play_vector_frame
+    lea     fast_bpl1,a0
+    move.l  draw_bpl1(pc),a1
+    move.w  #639,d0
+.cp_fast:
+    move.l  (a0),(a1)+
+    clr.l   (a0)+
+    move.l  (a0),(a1)+
+    clr.l   (a0)+
+    move.l  (a0),(a1)+
+    clr.l   (a0)+
+    move.l  (a0),(a1)+
+    clr.l   (a0)+
+    dbf     d0,.cp_fast
     bsr.w   apply_blitter_aa
 
     btst    #6,CIAAPRA
@@ -151,6 +163,8 @@ copperlist:  ds.b 512
 
     section fastram_bss,bss
     even
+fast_bpl1:
+    ds.b    BPL_SIZE
 edge_buf:
     ds.b    10240
 fill_lut:

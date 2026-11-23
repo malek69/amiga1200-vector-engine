@@ -7,7 +7,7 @@
 | Median A1200 v1.0 | Bad Apple!! A1200 v1.0 |
 | :---: | :---: |
 | ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
-| **[Download .LHA (median-v1.0)](https://github.com)** | **[Download .LHA (badapple-v1.0)](https://github.com)** |
+| **[Download .LHA (median-v1.0.1)](https://github.commalek69/amiga1200-vector-engine/releases/download/v1.0.1/MedianA1200_AGA_THEA1200.lha)** | **[Download .LHA (badapple-v1.0.1)](https://github.commalek69/amiga1200-vector-engine/releases/download/v1.0.1/BadappleA1200_AGA_THEA1200.lha)** |
 ## Hardware Requirements
 - **System:** Commodore Amiga 1200 (68EC020+ 14 MHz, AGA), **THEA1200**, FS-UAE, or WinUAE.
 - **Memory:** **2 MB Chip RAM + 8 MB Fast RAM** (512 KB XOR LUT + Fast-RAM backbuffer + audio/vector stream).
@@ -21,9 +21,11 @@
 - **Source & Style:** Full 3:39 *Bad Apple!!* (ZUN / Anira) at locked **50.00 FPS PAL** (1 frame per VBL tick) with crisp cutouts and Blitter AA.
 - **Frame Pipeline:** `init_fill_lut` (512 KB XOR LUT) -> `draw_polygon_mode` (`inv_tab` stepping) -> 32-bit `Fast->Chip` transfer -> `apply_blitter_aa` + 4CH Paula DMA.
 
-## Verified Compatibility (v1.0.1)
-- **Real Hardware / FPGA:** Commodore Amiga 1200 (68EC020 14 MHz + 8 MB Fast RAM, AGA), **THEA1200** (Amiberry WHDLoad auto-boot).
-- **Emulators Tested:** **FS-UAE** (Linux x86_64, A1200 PAL 50Hz), **RetroArch PUAE** (Android / ARM64 direct `.lha` WHDLoad launch), **WinUAE**.
+## Verified Compatibility & Tested Platforms (v1.0.1)
+- **RetroArch (`PUAE` Core — Android / ARM64 / PC):** Verified working out-of-the-box via **Load Content** directly on `.lha` archives (auto-detects AGA + 8 MB Fast RAM + WHDLoad `.slave`).
+- **THEA1200 / Amiberry:** Verified working via direct `.lha` WHDLoad auto-boot (`_AGA_THEA1200.lha`).
+- **Real Hardware:** Commodore Amiga 1200 (68EC020 14 MHz + 8 MB Fast RAM, AGA).
+- **FS-UAE (Linux / Windows / macOS):** Supported via WHDLoad auto-boot (`--hard_drive_0=<file>.lha --whdload_args=<Name>.slave`).
 
 ## Engine Modules (`src/`)
 - `main.s` (50Hz VBL loop & Fast->Chip copy) | `gfx_engine.i` (AGA takeover, Copper, Blitter AA) | `vec3d_engine.i` (N-gon LUT rasterizer)
@@ -41,7 +43,7 @@
 | Median A1200 v1.0 | Bad Apple!! A1200 v1.0 |
 | :---: | :---: |
 | ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
-| **[Download .LHA (median-v1.0)](https://github.com)** | **[Download .LHA (badapple-v1.0)](https://github.com)** |
+| LINK_SLOT | LINK_SLOT |
 ## Wymagania sprzętowe
 - **Komputer / Emulator:** Commodore Amiga 1200 (68EC020+ 14 MHz, AGA), **THEA1200**, FS-UAE lub WinUAE.
 - **Pamięć:** **2 MB Chip RAM + 8 MB Fast RAM** (tablica LUT 512 KB + bufor Fast-RAM + strumień A/V).

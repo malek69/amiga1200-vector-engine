@@ -16,22 +16,9 @@ def mk_ico(it, dt=None, tt=None):
             out += bs(t)
     return bytes(out)
 def mk_lha(lp, rf):
-    def crc(d):
-        c = 0
-        for b in d:
-            c ^= b
-            for _ in range(8): c = (c >> 1) ^ 0xa001 if (c & 1) else (c >> 1)
-        return c & 0xffff
-    ar = bytearray()
-    for dp, _, fns in os.walk(rf):
-        rd = os.path.relpath(dp, rf)
-        for fn in sorted(fns):
-            p = open(os.path.join(dp, fn), "rb").read()
-            fb = fn.encode("ascii")
-            et = (bytearray([2]) + bytes([255]).join(x.encode("ascii") for x in rd.split(os.sep)) + bytes([255, 0, 0])) if rd != "." else bytearray()
-            hb = bytearray(b"-lh0-") + struct.pack("<IIIB", len(et)+len(p), len(p), 0x56750000, 0x20) + bytes([1, len(fb)]) + fb + struct.pack("<HBH", crc(p), 65, len(et))
-            ar += bytes([len(hb), sum(hb)&0xff]) + hb + et + p
-    open(lp, "wb").write(ar + bytes([0]))
+    if os.path.exists(lp): os.remove(lp)
+    items = sorted(os.listdir(rf))
+    subprocess.run(["lha", "ao1", os.path.abspath(lp)] + items, cwd=rf, check=True)
 def get_hunk_layout(ep):
     d = open(ep, "rb").read()
     n, = struct.unpack_from(">I", d, 8)

@@ -97,6 +97,7 @@ draw_polygon_mode:
     swap    d3
     move.l  d3,d1
     swap    d1
+    and.l   #$00010000,d1
     dbf     d6,.xl
     add.w   d7,a0
     add.w   d7,a2

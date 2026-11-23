@@ -6,7 +6,8 @@ play_vector_frame:
     move.l  (a0,d0.l*4),a0
     lea     CUSTOM,a1
     move.w  #$0c00,BPLCON3(a1)
-    move.w  (a0)+,COLOR00(a1)
+    addq.l  #2,a0
+    move.w  #$0eee,COLOR00(a1)
     move.w  #$0111,COLOR01(a1)
     move.w  #$0e11,COLOR02(a1)
     move.w  #$0e11,COLOR03(a1)

@@ -1,4 +1,3 @@
-; [EN/PL] MODULE: vec3d_engine.i | Fast-RAM XOR Scanline Polygon Rasterizer
 init_fill_lut:
     movem.l d0-d6/a0,-(sp)
     lea     fill_lut,a0
@@ -51,7 +50,6 @@ draw_polygon_mode:
     move.w  d3,d1
     dbf     d7,.el
     move.w  d4,d2
-    move.w  d3,d1
     move.w  d5,d3
     bsr.w   .ed
     move.w  bbox_y1(pc),d2
@@ -63,9 +61,9 @@ draw_polygon_mode:
     move.w  bbox_x2(pc),d1
     lsr.w   #4,d1
     cmp.w   #19,d1
-    bge.s   .bx2_ok
+    bge.s   .bx_ok
     addq.w  #1,d1
-.bx2_ok:
+.bx_ok:
     move.w  d1,d4
     sub.w   d0,d4
     move.w  d3,d5
@@ -109,19 +107,7 @@ draw_polygon_mode:
     movem.l (sp)+,d0-d7/a0/a2-a5
     rts
 .ed: movem.l d0-d7/a0,-(sp)
-    tst.w   d1
-    bpl.s   .y0a
-    moveq   #0,d1
-.y0a: cmp.w #255,d1
-    ble.s   .y0b
-    move.w  #255,d1
-.y0b: tst.w d3
-    bpl.s   .y1a
-    moveq   #0,d3
-.y1a: cmp.w #255,d3
-    ble.s   .y1b
-    move.w  #255,d3
-.y1b: cmp.w d1,d3
+    cmp.w   d1,d3
     beq.w   .ex
     bgt.s   .ys
     exg     d0,d2

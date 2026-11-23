@@ -6,10 +6,10 @@
 ;      init dual 2048 B Chip-RAM buffers, and start 4-channel Paula DMA
 ;    - aud0_irq_handler: Level 4 IRQ refilling next PCM chunk from Fast RAM
 ; ============================================================================
-setup_paula: wylacza sprzetowy filtr LED (CIAAPRA bit 1), inicjuje
+; setup_paula: wylacza sprzetowy filtr LED (CIAAPRA bit 1), inicjuje
 ;      podwojne bufory Chip-RAM (2048 B) i uruchamia 4 kanaly DMA Pauli
 ;    - ; --- aud0_irq_handler: Level 4 IRQ swapping next 2048 B PCM buffer ---
-aud0_irq_handler: przerwanie Level 4 uzupelniajace kolejny blok PCM
+; aud0_irq_handler: przerwanie Level 4 uzupelniajace kolejny blok PCM
 ; ============================================================================
 ; ============================================================================
 ;  MODUL: audio_player.i | Amiga 1200 (AGA / 68020+) & THEA1200 Vector Engine v1.0
@@ -49,10 +49,10 @@ setup_paula:
     move.w  #AUDIO_BUF_SIZE/2,AUD2LEN(a5)
     move.w  #AUDIO_BUF_SIZE/2,AUD3LEN(a5)
 
-    move.w  #215,AUD0PER(a5)        ; 3546895 / 215 = 16497 Hz
-    move.w  #215,AUD1PER(a5)
-    move.w  #215,AUD2PER(a5)
-    move.w  #215,AUD3PER(a5)
+    move.w  #354,AUD0PER(a5)        ; 3546895 / 215 = 16497 Hz
+    move.w  #354,AUD1PER(a5)
+    move.w  #354,AUD2PER(a5)
+    move.w  #354,AUD3PER(a5)
 
     move.w  #26,AUD0VOL(a5)
     move.w  #26,AUD1VOL(a5)
@@ -112,20 +112,3 @@ aud0_irq_handler:
     movem.l (sp)+,d0-d2/a0-a2/a5
     rte
 
-vbl_irq_handler:
-    movem.l d0-d7/a0-a6,-(sp)
-    lea     CUSTOM,a5
-    move.w  INTREQR(a5),d0
-    btst    #5,d0
-    beq.s   .exit
-
-    addq.l  #1,vbl_tick
-    tst.b   swap_ready
-    beq.s   .ack
-    bsr.w   swap_buffers
-    clr.b   swap_ready
-.ack:
-    move.w  #$0020,INTREQ(a5)
-.exit:
-    movem.l (sp)+,d0-d7/a0-a6
-    rte

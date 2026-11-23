@@ -7,7 +7,7 @@ ws: moveq #-1,d0
     dc.l $200000,0
     dc.w _start-ws,0,0
     dc.b 0,$59
-    dc.l $00800000
+    dc.l $00680000
     dc.w _n-ws,_c-ws,_i-ws,0
     dc.l 0
     dc.w 0,0

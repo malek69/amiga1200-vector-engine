@@ -103,6 +103,8 @@ swap_buffers:
     move.w  d1,cop_b2l
     swap    d1
     move.w  d1,cop_b2h
+    lea     CUSTOM,a5
+    move.w  d0,COPJMP1(a5)
     rts
 
 wait_blitter:

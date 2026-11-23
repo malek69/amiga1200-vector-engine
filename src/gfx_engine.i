@@ -156,6 +156,10 @@ copper_list:
     dc.w    $010a,$0000
     dc.w    $0102,$0000
     dc.w    $0104,$0000
+    dc.w    $0180,$0eee
+    dc.w    $0182,$0111
+    dc.w    $0184,$0e11
+    dc.w    $0186,$0e11
     dc.w    $00e0
 cop_b1h: dc.w 0
     dc.w    $00e2

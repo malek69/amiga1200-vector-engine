@@ -23,7 +23,7 @@
 
 ## Package Variants & Verified Compatibility (v1.0.1)
 - **`.lha` (`*_AGA_THEA1200.lha` — RetroArch PUAE / THEA1200 / Real A1200):** Packed with Amiga LHA Level 1 headers and 78-byte `WBPROJECT` WHDLoad icons. Tested and verified working out-of-the-box via **Load Content** in **RetroArch (`PUAE` core)** and **THEA1200 (`Amiberry`)**.
-- **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** Standard WHDLoad ZIP archive supported natively without external `python-lhafile` plugins. Mount as Hard Drive (`DH0`) and pass `MedianA1200.slave` or `BadappleA1200.slave` in WHDLoad arguments.
+- **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** Standard WHDLoad ZIP archive supported natively without external `python-lhafile` plugins. 1-click auto-boot via `S/startup-sequence` — simply mount the `.zip` as Hard Drive (`DH0`) on an A1200 (8 MB Fast RAM) profile and click **Start**.
 
 ## Engine Modules (`src/`)
 - `main.s` (50Hz VBL loop & Fast->Chip copy) | `gfx_engine.i` (AGA takeover, Copper, Blitter AA) | `vec3d_engine.i` (N-gon LUT rasterizer)

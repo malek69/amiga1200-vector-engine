@@ -81,9 +81,9 @@ sl = open(f"{sd}/whdload_slave.s").read().replace("{EXP_MEM}", f"{em:08x}").repl
 open(f"{pr}/slave.s", "w").write(sl)
 subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-nosym", f"{pr}/slave.s", "-o", f"{pr}/MedianA1200/MedianA1200.slave"], check=True)
 os.remove(f"{pr}/slave.s")
-open(f"{pr}/MedianA1200.info", "wb").write(bd.mk_ico(2))
+open(f"{pr}/MedianA1200.info", "wb").write(bd.mk_ico(4, "WHDLoad", ["SLAVE=MedianA1200.slave", "NoMMU"]))
 open(f"{pr}/MedianA1200/MedianA1200.info", "wb").write(bd.mk_ico(4, "WHDLoad", ["SLAVE=MedianA1200.slave", "NoMMU"]))
-bd.mk_lha(f"{od}/MedianA1200_THEA1200_Retail.lha", pr)
+bd.mk_lha(f"{od}/MedianA1200_AGA_THEA1200.lha", pr)
 shutil.rmtree(pr)
 with zipfile.ZipFile(f"{od}/ud_mdn_a1200_retail.zip", "w", zipfile.ZIP_DEFLATED) as zf:
     zf.write(exe, "MEDIAN_A1200")

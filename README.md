@@ -4,10 +4,10 @@
 
 > **Credits / Autorzy:** `malek69` & **Gemini AI** *(Vibe Coding Edition, 2026 — AI-assisted M68020 bare-metal code & Python toolchain)*
 
-| Median A1200 v1.0 | Bad Apple!! A1200 v1.0 |
+| Median A1200 v1.0.1 | Bad Apple!! A1200 v1.0.1 |
 | :---: | :---: |
 | ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
-| **[Download .LHA (median-v1.0.1)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/MedianA1200_AGA_THEA1200.lha)** | **[Download .LHA (badapple-v1.0.1)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/BadappleA1200_AGA_THEA1200.lha)** |
+| **[Download .LHA — RetroArch / THEA1200](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/MedianA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP — FS-UAE / WinUAE](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/MedianA1200_AGA_THEA1200_FSUAE.zip)** | **[Download .LHA — RetroArch / THEA1200](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/BadappleA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP — FS-UAE / WinUAE](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/BadappleA1200_AGA_THEA1200_FSUAE.zip)** |
 ## Hardware Requirements
 - **System:** Commodore Amiga 1200 (68EC020+ 14 MHz, AGA), **THEA1200**, FS-UAE, or WinUAE.
 - **Memory:** **2 MB Chip RAM + 8 MB Fast RAM** (512 KB XOR LUT + Fast-RAM backbuffer + audio/vector stream).
@@ -21,11 +21,9 @@
 - **Source & Style:** Full 3:39 *Bad Apple!!* (ZUN / Anira) at locked **50.00 FPS PAL** (1 frame per VBL tick) with crisp cutouts and Blitter AA.
 - **Frame Pipeline:** `init_fill_lut` (512 KB XOR LUT) -> `draw_polygon_mode` (`inv_tab` stepping) -> 32-bit `Fast->Chip` transfer -> `apply_blitter_aa` + 4CH Paula DMA.
 
-## Verified Compatibility & Tested Platforms (v1.0.1)
-- **RetroArch (`PUAE` Core — Android / ARM64 / PC):** Verified working out-of-the-box via **Load Content** directly on `.lha` archives (auto-detects AGA + 8 MB Fast RAM + WHDLoad `.slave`).
-- **THEA1200 / Amiberry:** Verified working via direct `.lha` WHDLoad auto-boot (`_AGA_THEA1200.lha`).
-- **Real Hardware:** Commodore Amiga 1200 (68EC020 14 MHz + 8 MB Fast RAM, AGA).
-- **FS-UAE (Linux / Windows / macOS):** Supported via WHDLoad auto-boot (`--hard_drive_0=<file>.lha --whdload_args=<Name>.slave`).
+## Package Variants & Verified Compatibility (v1.0.1)
+- **`.lha` (`*_AGA_THEA1200.lha` — RetroArch PUAE / THEA1200 / Real A1200):** Packed with Amiga LHA Level 1 headers and 78-byte `WBPROJECT` WHDLoad icons. Tested and verified working out-of-the-box via **Load Content** in **RetroArch (`PUAE` core)** and **THEA1200 (`Amiberry`)**.
+- **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** Standard WHDLoad ZIP archive supported natively without external `python-lhafile` plugins. Mount as Hard Drive (`DH0`) and pass `MedianA1200.slave` or `BadappleA1200.slave` in WHDLoad arguments.
 
 ## Engine Modules (`src/`)
 - `main.s` (50Hz VBL loop & Fast->Chip copy) | `gfx_engine.i` (AGA takeover, Copper, Blitter AA) | `vec3d_engine.i` (N-gon LUT rasterizer)

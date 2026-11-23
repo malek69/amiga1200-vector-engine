@@ -62,7 +62,7 @@ sys_takeover:
     bsr.w   swap_buffers
     move.l  #copper_list,COP1LC(a5)
     move.w  d0,COPJMP1(a5)
-    move.w  #$83cf,DMACON(a5)
+    move.w  #$83d0,DMACON(a5)
     move.l  vbr_base(pc),a0
     move.l  #vbl_irq_handler,$6c(a0)
     move.w  #$c020,INTENA(a5)
@@ -89,21 +89,17 @@ wait_vbl:
     rts
 
 swap_buffers:
-    lea     copper_list,a0
+    lea     CUSTOM,a5
     move.l  disp_bpl1(pc),d0
     move.l  draw_bpl1(pc),d1
     move.l  d1,disp_bpl1
     move.l  d0,draw_bpl1
-    move.w  d1,46(a0)
-    swap    d1
-    move.w  d1,42(a0)
+    move.l  d1,$0e0(a5)
     move.l  disp_bpl2(pc),d0
     move.l  draw_bpl2(pc),d1
     move.l  d1,disp_bpl2
     move.l  d0,draw_bpl2
-    move.w  d1,54(a0)
-    swap    d1
-    move.w  d1,50(a0)
+    move.l  d1,$0e4(a5)
     rts
 
 wait_blitter:
@@ -157,10 +153,6 @@ copper_list:
     dc.w    $010a,$0000
     dc.w    $0102,$0000
     dc.w    $0104,$0000
-    dc.w    $00e0,$0000
-    dc.w    $00e2,$0000
-    dc.w    $00e4,$0000
-    dc.w    $00e6,$0000
     dc.w    $0100,$2200
     dc.w    $ffff,$fffe
     section bpl_chip,bss_c

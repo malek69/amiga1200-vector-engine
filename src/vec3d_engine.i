@@ -91,7 +91,7 @@ draw_polygon_mode:
     clr.w   (a0)+
     add.l   d1,d2
     move.l  (a3,d2.l*4),d3
-    or.w    d3,(a2)+
+    eor.w   d3,(a2)+
     swap    d3
     move.l  d3,d1
     swap    d1
@@ -161,9 +161,9 @@ draw_polygon_mode:
     tst.w   d4
     bpl.s   .sx0
     moveq   #0,d4
-.sx0: cmp.w #319,d4
+.sx0: cmp.w #318,d4
     ble.s   .sx1
-    move.w  #319,d4
+    move.w  #318,d4
 .sx1: move.w d4,d5
     lsr.w   #3,d5
     not.w   d4

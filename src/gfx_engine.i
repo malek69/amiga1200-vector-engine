@@ -55,18 +55,12 @@ sys_takeover:
     move.w  #$7fff,DMACON(a5)
     move.w  #$7fff,INTENA(a5)
     move.w  #$7fff,INTREQ(a5)
-    move.l  #$00080000,disp_bpl1
-    move.l  #$00082800,disp_bpl2
-    move.l  #$00094000,draw_bpl1
-    move.l  #$00096800,draw_bpl2
-    lea     copper_tpl(pc),a0
-    move.l  #$000a8000,a1
-    moveq   #15,d0
-.cp_cop:
-    move.l  (a0)+,(a1)+
-    dbf     d0,.cp_cop
+    move.l  #bpl_buf_a,disp_bpl1
+    move.l  #bpl_buf_a+10240,disp_bpl2
+    move.l  #bpl_buf_b,draw_bpl1
+    move.l  #bpl_buf_b+10240,draw_bpl2
     bsr.w   swap_buffers
-    move.l  #$000a8000,COP1LC(a5)
+    move.l  #copper_list,COP1LC(a5)
     move.w  d0,COPJMP1(a5)
     move.w  #$83cf,DMACON(a5)
     move.l  vbr_base(pc),a0
@@ -95,7 +89,7 @@ wait_vbl:
     rts
 
 swap_buffers:
-    move.l  #$000a8000,a0
+    lea     copper_list,a0
     move.l  disp_bpl1(pc),d0
     move.l  draw_bpl1(pc),d1
     move.l  d1,disp_bpl1
@@ -149,7 +143,10 @@ vbl_irq_handler:
 vbl_tick:   dc.l 0
 vbr_base:   dc.l 0
 swap_ready: dc.b 0,0
-copper_tpl:
+
+    section cop_chip,data_c
+    even
+copper_list:
     dc.w    $0106,$0c00
     dc.w    $01fc,$0000
     dc.w    $008e,$2c81
@@ -160,9 +157,13 @@ copper_tpl:
     dc.w    $010a,$0000
     dc.w    $0102,$0000
     dc.w    $0104,$0000
-    dc.w    $00e0,$0008
+    dc.w    $00e0,$0000
     dc.w    $00e2,$0000
-    dc.w    $00e4,$0008
-    dc.w    $00e6,$2800
+    dc.w    $00e4,$0000
+    dc.w    $00e6,$0000
     dc.w    $0100,$2200
     dc.w    $ffff,$fffe
+    section bpl_chip,bss_c
+bpl_buf_a:  ds.b 20480
+bpl_buf_b:  ds.b 20480
+    section code,code

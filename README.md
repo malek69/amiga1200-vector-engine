@@ -7,7 +7,7 @@
 | Median A1200 v1.0 | Bad Apple!! A1200 v1.0 |
 | :---: | :---: |
 | ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
-| **[Download .LHA (median-v1.0.1)](https://github.commalek69/amiga1200-vector-engine/releases/download/v1.0.1/MedianA1200_AGA_THEA1200.lha)** | **[Download .LHA (badapple-v1.0.1)](https://github.commalek69/amiga1200-vector-engine/releases/download/v1.0.1/BadappleA1200_AGA_THEA1200.lha)** |
+| **[Download .LHA (median-v1.0.1)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/MedianA1200_AGA_THEA1200.lha)** | **[Download .LHA (badapple-v1.0.1)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/BadappleA1200_AGA_THEA1200.lha)** |
 ## Hardware Requirements
 - **System:** Commodore Amiga 1200 (68EC020+ 14 MHz, AGA), **THEA1200**, FS-UAE, or WinUAE.
 - **Memory:** **2 MB Chip RAM + 8 MB Fast RAM** (512 KB XOR LUT + Fast-RAM backbuffer + audio/vector stream).

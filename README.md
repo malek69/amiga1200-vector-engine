@@ -7,7 +7,7 @@
 | Median A1200 v1.0.1 | Bad Apple!! A1200 v1.0.1 |
 | :---: | :---: |
 | ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
-| **[Download .LHA — RetroArch / THEA1200](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/MedianA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP — FS-UAE / WinUAE](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/MedianA1200_AGA_THEA1200_FSUAE.zip)** | **[Download .LHA — RetroArch / THEA1200](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/BadappleA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP — FS-UAE / WinUAE](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.0.1/BadappleA1200_AGA_THEA1200_FSUAE.zip)** |
+| **[Download .LHA — RetroArch / THEA1200](https://github.com/malek69/amiga1200-vector-engine/releases/download/median-v1.0.1/MedianA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP — FS-UAE / WinUAE](https://github.com/malek69/amiga1200-vector-engine/releases/download/median-v1.0.1/MedianA1200_AGA_THEA1200_FSUAE.zip)** | **[Download .LHA — RetroArch / THEA1200](https://github.com/malek69/amiga1200-vector-engine/releases/download/badapple-v1.0.1/BadappleA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP — FS-UAE / WinUAE](https://github.com/malek69/amiga1200-vector-engine/releases/download/badapple-v1.0.1/BadappleA1200_AGA_THEA1200_FSUAE.zip)** |
 ## Hardware Requirements
 - **System:** Commodore Amiga 1200 (68EC020+ 14 MHz, AGA), **THEA1200**, FS-UAE, or WinUAE.
 - **Memory:** **2 MB Chip RAM + 8 MB Fast RAM** (512 KB XOR LUT + Fast-RAM backbuffer + audio/vector stream).

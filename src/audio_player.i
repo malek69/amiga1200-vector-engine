@@ -60,6 +60,7 @@ setup_paula:
     move.w  #26,AUD3VOL(a5)
 
     move.w  #$0080,INTREQ(a5)
+    move.w  #$820f,DMACON(a5)
     move.w  #$c080,INTENA(a5)
     rts
 

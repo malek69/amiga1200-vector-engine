@@ -89,17 +89,20 @@ wait_vbl:
     rts
 
 swap_buffers:
-    lea     CUSTOM,a5
     move.l  disp_bpl1(pc),d0
     move.l  draw_bpl1(pc),d1
     move.l  d1,disp_bpl1
     move.l  d0,draw_bpl1
-    move.l  d1,$0e0(a5)
+    move.w  d1,cop_b1l
+    swap    d1
+    move.w  d1,cop_b1h
     move.l  disp_bpl2(pc),d0
     move.l  draw_bpl2(pc),d1
     move.l  d1,disp_bpl2
     move.l  d0,draw_bpl2
-    move.l  d1,$0e4(a5)
+    move.w  d1,cop_b2l
+    swap    d1
+    move.w  d1,cop_b2h
     rts
 
 wait_blitter:
@@ -153,6 +156,14 @@ copper_list:
     dc.w    $010a,$0000
     dc.w    $0102,$0000
     dc.w    $0104,$0000
+    dc.w    $00e0
+cop_b1h: dc.w 0
+    dc.w    $00e2
+cop_b1l: dc.w 0
+    dc.w    $00e4
+cop_b2h: dc.w 0
+    dc.w    $00e6
+cop_b2l: dc.w 0
     dc.w    $0100,$2200
     dc.w    $ffff,$fffe
     section bpl_chip,bss_c

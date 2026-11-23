@@ -62,6 +62,10 @@ draw_polygon_mode:
     lsr.w   #4,d0
     move.w  bbox_x2(pc),d1
     lsr.w   #4,d1
+    cmp.w   #19,d1
+    bge.s   .bx2_ok
+    addq.w  #1,d1
+.bx2_ok:
     move.w  d1,d4
     sub.w   d0,d4
     move.w  d3,d5

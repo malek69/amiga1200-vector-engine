@@ -1,11 +1,13 @@
-import os, shutil, subprocess, sys, zipfile, cv2, numpy as np
+import os, re, shutil, subprocess, sys, zipfile, cv2, numpy as np
 sys.path.insert(0, "tools")
 import build_demo as bd
 
 vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases/v1.1.0"
 os.makedirs(od, exist_ok=True)
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=7200,treble=g=3:f=3200,aresample=16497:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "10020", f"{sd}/median_audio.raw"], check=True)
+ap_txt = open(f"{sd}/audio_player.i").read()
+open(f"{sd}/audio_player.i", "w").write(re.sub(r"#[0-9]+(?=,AUD)", "#215", ap_txt))
+subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=6800,alimiter=limit=0.85,aresample=16497:resampler=soxr,volume=0.76", "-f", "s8", "-ac", "1", "-ar", "16497", f"{sd}/median_audio.raw"], check=True)
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", r"crop=min(iw\,ih*4/3):ih,scale=624:496:flags=lanczos,fps=50", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None
 k3 = np.ones((3, 3), dtype=np.uint8)

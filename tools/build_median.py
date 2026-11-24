@@ -5,7 +5,7 @@ import build_demo as bd
 vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases/v1.1.0"
 os.makedirs(od, exist_ok=True)
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=4600,aresample=10020:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "10020", f"{sd}/median_audio.raw"], check=True)
+subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=7200,treble=g=3:f=3200,aresample=16497:resampler=soxr,volume=0.85", "-f", "s8", "-ac", "1", "-ar", "10020", f"{sd}/median_audio.raw"], check=True)
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", r"crop=min(iw\,ih*4/3):ih,scale=624:496:flags=lanczos,fps=50", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None
 k3 = np.ones((3, 3), dtype=np.uint8)

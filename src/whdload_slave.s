@@ -3,7 +3,7 @@
 ws: moveq #-1,d0
     rts
     dc.b "WHDLOADS"
-    dc.w 17,$0024
+    dc.w 17,$002c
     dc.l $200000,0
     dc.w _start-ws,0,0
     dc.b 0,$59

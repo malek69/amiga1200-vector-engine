@@ -53,7 +53,7 @@ def main():
     print(f"[1/4] Audio: {hz_r:.1f} Hz (AUD0PER={per}) | Video: {args.fps} FPS @ 640x256 Hi-Res", flush=True)
     ap_p = os.path.join(sd, "audio_player.i")
     ap_t = open(ap_p).read()
-    open(ap_p, "w").write(re.sub(r"#[0-9]+(?=,AUD)", f"#{per}", ap_t))
+    open(ap_p, "w").write(re.sub(r"#[0-9]+(?=,AUD[0-3]PER)", f"#{per}", ap_t))
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"highpass=f=40,lowpass=f=4400,alimiter=limit=0.82,aresample={int(round(hz_r))}:resampler=soxr,volume=0.80", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
     w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     x0, y0, cw, ch = 0, 0, w_s, h_s

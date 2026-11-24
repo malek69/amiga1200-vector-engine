@@ -6,7 +6,7 @@ vid = os.path.expanduser("~/hi.mp4")
 sd, od = "src", "releases/v1.1.0"
 os.makedirs(od, exist_ok=True)
 ap_txt = open(f"{sd}/audio_player.i").read()
-open(f"{sd}/audio_player.i", "w").write(re.sub(r"#[0-9]+(?=,AUD)", "#301", ap_txt))
+open(f"{sd}/audio_player.i", "w").write(re.sub(r"#[0-9]+(?=,AUD[0-3]PER)", "#301", ap_txt))
 subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=6800,alimiter=limit=0.85,aresample=11800:resampler=soxr,volume=0.80", "-f", "s8", "-ac", "1", "-ar", "11800", f"{sd}/median_audio.raw"], check=True)
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", r"crop=min(iw\,ih*4/3):ih,scale=624:496:flags=lanczos,fps=50", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None

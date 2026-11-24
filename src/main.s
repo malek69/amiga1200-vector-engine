@@ -59,20 +59,20 @@ clear_fast_buffers:
     rts
 
 copy_fast_to_chip:
-    movem.l d0-d7/a0-a6,-(sp)
+    movem.l d0-d7/a0-a5,-(sp)
     lea     fast_bpl1,a0
     move.l  draw_bpl1(pc),a1
     bsr.s   .copy_plane
     lea     fast_bpl2,a0
     move.l  draw_bpl2(pc),a1
     bsr.s   .copy_plane
-    movem.l (sp)+,d0-d7/a0-a6
+    movem.l (sp)+,d0-d7/a0-a5
     rts
 .copy_plane:
     move.w  #426-1,d7
 .cp_lp:
-    movem.l (a0)+,d0-d6/a2-a6
-    movem.l d0-d6/a2-a6,(a1)
+    movem.l (a0)+,d0-d7/a2-a5
+    movem.l d0-d7/a2-a5,(a1)
     lea     48(a1),a1
     dbf     d7,.cp_lp
     movem.l (a0)+,d0-d6/a2

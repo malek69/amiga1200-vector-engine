@@ -126,7 +126,7 @@ _start:
     bne.s .rl
     bra.s .dr
 .rn: movec cacr,d0
-    or.w #$0808,d0
+    or.w #$0909,d0
     movec d0,cacr
     move.l hb(pc),a0
     jsr (a0)

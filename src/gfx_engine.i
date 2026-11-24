@@ -155,11 +155,11 @@ swap_ready: dc.b 0,0
     even
 copper_list:
     dc.w    $0106,$0c00
-    dc.w    $01fc,$0003
+    dc.w    $01fc,$0000
     dc.w    $008e,$2c81
     dc.w    $0090,$2cc1
-    dc.w    $0092,$0028
-    dc.w    $0094,$00b8
+    dc.w    $0092,$003c
+    dc.w    $0094,$00d4
     dc.w    $0108,$0000
     dc.w    $010a,$0000
     dc.w    $0102,$0000

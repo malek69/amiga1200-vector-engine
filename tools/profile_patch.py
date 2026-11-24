@@ -1,4 +1,4 @@
-import os, shutil, subprocess
+import os, re, shutil, subprocess
 def apply_profile(sd, profile, hz_target=12105):
     if profile == "standard": return hz_target, 312, 248, 4, 4, 550, ""
     h = 512 if profile == "060" else 256
@@ -10,8 +10,10 @@ def apply_profile(sd, profile, hz_target=12105):
     g = g.replace("dc.w    $0092,$0038", "dc.w    $0092,$003c").replace("dc.w    $0094,$00d0", "dc.w    $0094,$00d4")
     g = g.replace("dc.w    $0100,$2200", "dc.w    $0100,$a204" if profile == "060" else "dc.w    $0100,$a200")
     if profile == "060":
-        g = g.replace("dc.w    $0108,$0000\n    dc.w    $010a,$0000", "dc.w    $0108,$0050\n    dc.w    $010a,$0050")
-        g = g.replace("move.l  disp_bpl1(pc),d0", "move.l  disp_bpl1(pc),d0\n    btst    #7,$dff004\n    beq.s   .evf\n    add.l   #80,d0\n.evf:")
+        g = g.replace("dc.w    $0108,$0000" + chr(10) + "    dc.w    $010a,$0000", "dc.w    $0108,$0050" + chr(10) + "    dc.w    $010a,$0050")
+        vbl_old = "    bsr.w   swap_buffers" + chr(10) + "    clr.b   swap_ready"
+        vbl_new = chr(10).join(["    btst    #7,$dff004", "    beq.s   .odd_f", "    bsr.w   swap_buffers", "    clr.b   swap_ready", "    bra.s   .v_dn", ".odd_f:", "    move.l  disp_bpl1(pc),d1", "    add.l   #80,d1", "    move.w  d1,cop_b1l", "    swap    d1", "    move.w  d1,cop_b1h", "    move.l  disp_bpl2(pc),d1", "    add.l   #80,d1", "    move.w  d1,cop_b2l", "    swap    d1", "    move.w  d1,cop_b2h", "    lea     CUSTOM,a5", "    move.w  d0,COPJMP1(a5)", ".v_dn:"])
+        g = g.replace(vbl_old, vbl_new)
     g = g.replace("bpl_buf_a:  ds.b 20480\nbpl_buf_b:  ds.b 20480", f"bpl_buf_a:  ds.b {bpl_sz*2}\nbpl_buf_b:  ds.b {bpl_sz*2}")
     open(f"{sd}/gfx_engine.i", "w").write(g)
     ms = open(f"{sd}/main.s").read()
@@ -23,12 +25,12 @@ def apply_profile(sd, profile, hz_target=12105):
     rem_cl = (bpl_sz * 2) % 48
     iters_cp = bpl_sz // 48
     rem_cp = bpl_sz % 48
-    rt = f"""clear_fast_buffers:\n    movem.l d0-d7/a0-a4,-(sp)\n    lea     fast_bpl1+{bpl_sz*2},a0\n    moveq   #0,d0\n    moveq   #0,d1\n    moveq   #0,d2\n    moveq   #0,d3\n    moveq   #0,d4\n    moveq   #0,d5\n    moveq   #0,d6\n    moveq   #0,d7\n    sub.l   a1,a1\n    sub.l   a2,a2\n    sub.l   a3,a3\n    sub.l   a4,a4\n    move.w  #{iters_cl}-1,d7\n.cl_lp:\n    movem.l d0-d6/a1-a4,-(a0)\n    move.l  d0,-(a0)\n    dbf     d7,.cl_lp\n    {"movem.l d0-d3,-(a0)" if rem_cl==16 else "movem.l d0-d7,-(a0)"}\n    movem.l (sp)+,d0-d7/a0-a4\n    rts\ncopy_fast_to_chip:\n    movem.l d0-d7/a0-a5,-(sp)\n    lea     fast_bpl1,a0\n    move.l  draw_bpl1(pc),a1\n    bsr.s   .cp\n    lea     fast_bpl2,a0\n    move.l  draw_bpl2(pc),a1\n    bsr.s   .cp\n    movem.l (sp)+,d0-d7/a0-a5\n    rts\n.cp:\n    move.w  #{iters_cp}-1,d7\n.cpl:\n    movem.l (a0)+,d0-d6/a2-a5\n    movem.l d0-d6/a2-a5,(a1)\n    move.l  (a0)+,44(a1)\n    lea     48(a1),a1\n    dbf     d7,.cpl\n    {"movem.l (a0)+,d0-d6/a2\n    movem.l d0-d6/a2,(a1)" if rem_cp==32 else "movem.l (a0)+,d0-d3\n    movem.l d0-d3,(a1)"}\n    rts\n"""
+    rt = f"""clear_fast_buffers:\n    movem.l d0-d7/a0-a4,-(sp)\n    lea     fast_bpl1+{bpl_sz*2},a0\n    moveq   #0,d0\n    moveq   #0,d1\n    moveq   #0,d2\n    moveq   #0,d3\n    moveq   #0,d4\n    moveq   #0,d5\n    moveq   #0,d6\n    moveq   #0,d7\n    sub.l   a1,a1\n    sub.l   a2,a2\n    sub.l   a3,a3\n    sub.l   a4,a4\n    move.w  #{iters_cl}-1,d7\n.cl_lp:\n    movem.l d0-d6/a1-a4,-(a0)\n    move.l  d0,-(a0)\n    dbf     d7,.cl_lp\n    {"movem.l d0-d3,-(a0)" if rem_cl==16 else "movem.l d0-d7,-(a0)"}\n    movem.l (sp)+,d0-d7/a0-a4\n    rts\ncopy_fast_to_chip:\n    movem.l d0-d7/a0-a5,-(sp)\n    lea     fast_bpl1+{bpl_sz},a0\n    move.l  draw_bpl1(pc),a1\n    add.l   #{bpl_sz},a1\n    bsr.s   .cp\n    lea     fast_bpl2+{bpl_sz},a0\n    move.l  draw_bpl2(pc),a1\n    add.l   #{bpl_sz},a1\n    bsr.s   .cp\n    movem.l (sp)+,d0-d7/a0-a5\n    rts\n.cp:\n    move.w  #{iters_cp}-1,d7\n.cpl:\n    sub.w   #48,a0\n    sub.w   #48,a1\n    movem.l (a0),d0-d6/a2-a5\n    movem.l d0-d6/a2-a5,(a1)\n    move.l  44(a0),44(a1)\n    dbf     d7,.cpl\n    {"movem.l -32(a0),d0-d6/a2\n    movem.l d0-d6/a2,-32(a1)" if rem_cp==32 else "movem.l -16(a0),d0-d3\n    movem.l d0-d3,-16(a1)"}\n    rts\n"""
     ms = ms.replace("exit_program:\n    movem.l (sp)+,d0-a6\n    moveq   #0,d0\n    rts", "exit_program:\n    movem.l (sp)+,d0-a6\n    moveq   #0,d0\n    rts\n" + rt)
     ms = ms.replace("edge_buf:  ds.b 40*256", f"edge_buf:  ds.b {bpl_sz}\nfast_bpl1: ds.b {bpl_sz}\nfast_bpl2: ds.b {bpl_sz}")
     open(f"{sd}/main.s", "w").write(ms)
     v3 = open(f"{sd}/vec3d_engine.i").read()
-    v3 = v3.replace("move.w  #319,bbox_x1", "move.w  #639,bbox_x1").replace("cmp.w   #19,d1", "cmp.w   #39,d1")
+    v3 = re.sub(r"#319(?=,bbox_x1)", "#639", v3); v3 = re.sub(r"cmp\.w\s+#19,d1", "cmp.w   #39,d1", v3)
     v3 = v3.replace("move.w  #255,bbox_y1", f"move.w  #{h-1},bbox_y1").replace("cmp.w  #255,d1", f"cmp.w  #{h-1},d1")
     v3 = v3.replace("mulu.w  #40,d6", "mulu.w  #80,d6").replace("mulu.w  #40,d4", "mulu.w  #80,d4")
     v3 = v3.replace("move.l  draw_bpl1(pc),a2", "lea     fast_bpl1,a2").replace("move.l  draw_bpl2(pc),a2", "lea     fast_bpl2,a2")

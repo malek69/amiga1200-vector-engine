@@ -158,8 +158,8 @@ copper_list:
     dc.w    $01fc,$0000
     dc.w    $008e,$2c81
     dc.w    $0090,$2cc1
-    dc.w    $0092,$003c
-    dc.w    $0094,$00d8
+    dc.w    $0092,$0038
+    dc.w    $0094,$00d4
     dc.w    $0108,$0000
     dc.w    $010a,$0000
     dc.w    $0102,$0000
@@ -176,7 +176,7 @@ cop_b1l: dc.w 0
 cop_b2h: dc.w 0
     dc.w    $00e6
 cop_b2l: dc.w 0
-    dc.w    $0100,$a201
+    dc.w    $0100,$a200
     dc.w    $ffff,$fffe
     section bpl_chip,bss_c
     even

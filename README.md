@@ -1,17 +1,4 @@
-
----
-
-## Sterowanie (Klawiatura, Mysz i Pad THEA1200)
-
-| Kontroler / Klawisz | Dzialanie |
-| :--- | :--- |
-| **`LMB` (Lewy Przycisk Myszy)** | Natychmiastowe, czyste wyjscie do AmigaOS / WHDLoad |
-| **`Fire` (Joystick Port 2 / THEA1200)** | Wyjscie z dema przy uzyciu pada USB na konsoli THEA1200 (`$BFE001` bit 7) |
-| **`ESC`** | Wyjscie z klawiatury CIA-A (`$BFEC01`) |
-
----
-
-## Architektura i Moduly Silnika (`src/`)
+[**Polski**](README.md) | [English](README_EN.md) | ...## Architektura i Moduly Silnika (`src/`)
 
 | Modul | Rola w silniku | Mechanizmy sprzetowe i algorytmy |
 | :--- | :--- | :--- |

@@ -13,7 +13,7 @@
   A. Przejecie sprzetu AGA (Bare-Metal Hardware Takeover):
      - Wylaczenie wielozadaniowosci AmigaOS (Forbid/Disable), zachowanie
        oryginalnych wektorow przerwan (VBR), DMA, INTENA oraz Copperlisty.
-     - Konfiguracja ekranu PAL 320x256 w 3 bitplanach (8 kolorow, $3200)
+     - Konfiguracja ekranu PAL 640x256 (Hi-Res AGA, FMODE=$0003) w 3 bitplanach (8 kolorow, $3200)
        z podwojnym buforowaniem (bpl1/2/3_a <-> bpl1/2/3_b) przelaczanym
        bezposrednio w przerwaniu VBL Level 3 ($6c).
 
@@ -108,7 +108,7 @@
   "Napisz skrypt w Pythonie (OpenCV + NumPy + FFmpeg), ktory wyciagnie z pliku
    wideo 30 FPS sciezke dzwiekowa 8-bit signed PCM 16497 Hz (z filtrem
    lowpass 7800 Hz i limiterem) oraz strumien zamknietych wielokatow N-katnych
-   w rozdzielczosci Amigi 320x256 z zachowaniem proporcji 1:1. Kwadraty
+   w rozdzielczosci Amigi 640x256 (Hi-Res AGA, FMODE=$0003) z zachowaniem proporcji 1:1. Kwadraty
    uprosc algorytmem Douglas-Peucker do 4 wierzcholkow, otwory wewnetrzne
    oznacz jako tryb wycinania (HIERARCHY depth & 1), a czerwone okregi
    dopasuj matematycznie (minEnclosingCircle) do stalego 32-kata. Wygeneruj
@@ -116,7 +116,7 @@
 
   [PROMPT 2 - Sprzetowy silnik wypelniania wielokatow na Blitterze Amigi 1200]
   "Napisz w asemblerze M68020 (vasmm68k_mot) kompletny silnik wektorowy dla
-   Amigi 1200 (AGA, 320x256 PAL, 3 bitplany, double-buffering). Rysuj krawedzie
+   Amigi 1200 (AGA, 640x256 (Hi-Res AGA, FMODE=$0003) PAL, 3 bitplany, double-buffering). Rysuj krawedzie
    wielokatow metoda XOR (bchg) do bufora roboczego scratch_bpl w Chip RAM,
    a nastepnie wypelniaj prostokat otaczajacy (bounding box) sprzetowo
    ukladem Blitter w trybie DESC + Inclusive Fill ($000a) i nakladaj na

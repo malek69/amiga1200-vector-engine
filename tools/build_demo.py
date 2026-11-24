@@ -54,7 +54,7 @@ def main():
     ap_p = os.path.join(sd, "audio_player.i")
     ap_t = open(ap_p).read()
     open(ap_p, "w").write(re.sub(r"#[0-9]+(?=,AUD)", f"#{per}", ap_t))
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"highpass=f=40,lowpass=f=4400,alimiter=limit=0.82,aresample={int(round(hz_r))}:resampler=soxr,volume=0.72", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"highpass=f=40,lowpass=f=4400,alimiter=limit=0.82,aresample={int(round(hz_r))}:resampler=soxr,volume=0.80", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")], check=True)
     w_s, h_s = [int(x) for x in subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip().split(",")]
     x0, y0, cw, ch = 0, 0, w_s, h_s
     if args.crop_43 and (w_s / max(1, h_s)) > 1.5:
@@ -114,7 +114,7 @@ def main():
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
     os.chmod(exe_out, 0o755)
     sz = os.path.getsize(exe_out)
-    em = ((sz + 0x0E0000 + 0xFFFF) & ~0xFFFF)
+    em = 0x00680000
     lo = em - sz - 256
     pr = os.path.join(od, "_tmp_pkg")
     shutil.rmtree(pr, ignore_errors=True)

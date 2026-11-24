@@ -7,7 +7,7 @@ sd, od = "src", "releases/v1.1.0"
 os.makedirs(od, exist_ok=True)
 ap_txt = open(f"{sd}/audio_player.i").read()
 open(f"{sd}/audio_player.i", "w").write(re.sub(r"#[0-9]+(?=,AUD)", "#301", ap_txt))
-subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=6800,alimiter=limit=0.85,aresample=11800:resampler=soxr,volume=0.76", "-f", "s8", "-ac", "1", "-ar", "11800", f"{sd}/median_audio.raw"], check=True)
+subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", vid, "-vn", "-af", "highpass=f=45,lowpass=f=6800,alimiter=limit=0.85,aresample=11800:resampler=soxr,volume=0.80", "-f", "s8", "-ac", "1", "-ar", "11800", f"{sd}/median_audio.raw"], check=True)
 proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", vid, "-vf", r"crop=min(iw\,ih*4/3):ih,scale=624:496:flags=lanczos,fps=50", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 fb, uniq, fl, pr_raw, pr_lbl = 624 * 496 * 3, {}, list(), None, None
 k3 = np.ones((3, 3), dtype=np.uint8)
@@ -75,7 +75,7 @@ exe = os.path.abspath("releases/MEDIAN_A1200")
 subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe], cwd=sd, check=True)
 os.chmod(exe, 0o755)
 sz = os.path.getsize(exe)
-em = ((sz + 0x0E0000 + 0xFFFF) & ~0xFFFF)
+em = 0x00680000
 lo = em - sz - 256
 pr = f"{od}/_tmp_med"
 shutil.rmtree(pr, ignore_errors=True)

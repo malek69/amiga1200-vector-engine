@@ -55,10 +55,16 @@ sys_takeover:
     move.w  #$7fff,DMACON(a5)
     move.w  #$7fff,INTENA(a5)
     move.w  #$7fff,INTREQ(a5)
-    move.l  #bpl_buf_a,disp_bpl1
-    move.l  #bpl_buf_a+20480,disp_bpl2
-    move.l  #bpl_buf_b,draw_bpl1
-    move.l  #bpl_buf_b+20480,draw_bpl2
+    move.l  #bpl_buf_a+8,d0
+    and.b   #$f8,d0
+    move.l  d0,disp_bpl1
+    add.l   #20480,d0
+    move.l  d0,disp_bpl2
+    move.l  #bpl_buf_b+8,d0
+    and.b   #$f8,d0
+    move.l  d0,draw_bpl1
+    add.l   #20480,d0
+    move.l  d0,draw_bpl2
     bsr.w   swap_buffers
     move.l  #copper_list,COP1LC(a5)
     move.w  d0,COPJMP1(a5)
@@ -173,8 +179,8 @@ cop_b2l: dc.w 0
     dc.w    $0100,$a200
     dc.w    $ffff,$fffe
     section bpl_chip,bss_c
-    cnop 0,8
-bpl_buf_a:  ds.b 40960
-    cnop 0,8
-bpl_buf_b:  ds.b 40960
+    even
+bpl_buf_a:  ds.b 40976
+    even
+bpl_buf_b:  ds.b 40976
     section code,code

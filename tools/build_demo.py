@@ -118,7 +118,7 @@ def main():
     lo = em - sz - 256
     pr = os.path.join(od, "_tmp_pkg")
     shutil.rmtree(pr, ignore_errors=True)
-    fn_d = args.name.title().replace("_", "")
+    fn_d = args.name.title().replace("_", "").replace("A1200", "A1200_AGA")
     pd = os.path.join(pr, fn_d)
     os.makedirs(pd, exist_ok=True)
     shutil.copy2(exe_out, os.path.join(pd, args.name))

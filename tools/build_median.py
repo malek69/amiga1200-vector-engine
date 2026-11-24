@@ -85,7 +85,7 @@ sl = open(f"{sd}/whdload_slave.s").read().replace("{EXP_MEM}", f"{em:08x}").repl
 open(f"{pr}/slave.s", "w").write(sl)
 subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-nosym", f"{pr}/slave.s", "-o", f"{pr}/MedianA1200_AGA/MedianA1200.slave"], check=True)
 os.remove(f"{pr}/slave.s")
-open(f"{pr}/MedianA1200_AGA.info", "wb").write(bd.mk_ico(2))
+open(f"{pr}/MedianA1200_AGA.info", "wb").write(bd.mk_ico(4, "WHDLoad", ["SLAVE=MedianA1200.slave", "NoMMU"]))
 open(f"{pr}/MedianA1200_AGA/MedianA1200_AGA.info", "wb").write(bd.mk_ico(4, "WHDLoad", ["SLAVE=MedianA1200.slave", "NoMMU"]))
 bd.mk_lha(f"{od}/MedianA1200_AGA_THEA1200.lha", pr)
 os.makedirs(f"{pr}/S", exist_ok=True)

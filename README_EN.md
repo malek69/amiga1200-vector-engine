@@ -20,6 +20,12 @@
 | **`thea1200`** | **THEA1200**, **Amiberry (PC)**, **FS-UAE** | Native **`640x256` AGA Hi-Res** + Fast-RAM `movem.l` @ `50 FPS` | `12.1-16.5 kHz` PCM, up to `650` vertices |
 | **`060`** | Turbo **`MC68060` (50+ MHz, Z3 Fast RAM)** | **`640x512` AGA Hi-Res Interlace** (`1:1`, 0 stair-stepping) | `16.5 kHz` PCM, up to `1200` vertices |
 
+## Package Variants & Verified Compatibility (v1.1.0)
+- **`.lha` (`*_AGA_THEA1200.lha` — RetroArch PUAE / THEA1200 / Real A1200):** packed with Amiga LHA Level 1 headers and 78-byte `WBPROJECT` WHDLoad icons. Tested and verified out-of-the-box via **Load Content** in **RetroArch (`PUAE` core)** and **THEA1200 (`Amiberry`)**.
+- **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** standard WHDLoad ZIP archive supported natively without external `python-lhafile` plugins. 1-click auto-boot via `S/startup-sequence` — simply mount the `.zip` as Hard Drive (`DH0`) on an A1200 (8 MB Fast RAM) profile and click **Start**.
+
+---
+
 ## Requirements & Controls
 - **Hardware:** Amiga 1200 (68EC020+ 14 MHz, AGA, **2 MB Chip RAM + 8 MB Fast RAM**), **THEA1200**, FS-UAE, or WinUAE (Kickstart-free WHDLoad Slave v17).
 - **Exit:** `LMB`, **Fire (Joystick Port 2 / THEA1200)**, or `ESC`.
@@ -49,12 +55,6 @@
 
 - **`tools/build_median.py`** — dedicated pipeline converting *Median* (`624x496` -> `320x256` AGA + Blitter AA @ `50 FPS`, dual black/red layer extraction, polygon simplification, and packaging into `.lha` + `*_FSUAE.zip`).
 - **`tools/build_demo.py`** — universal video-to-vector `320x256` AGA + Blitter AA AGA converter (`--video`, `--fps`, `--threshold`, `--crop-43`, `--thin-lines`) compiling the M68020 executable (`vasmm68k_mot`), WHDLoad Slave, `.lha`, and `*_FSUAE.zip` archives.
-
----
-
-## Package Variants & Verified Compatibility (v1.1.0)
-- **`.lha` (`*_AGA_THEA1200.lha` — RetroArch PUAE / THEA1200 / Real A1200):** packed with Amiga LHA Level 1 headers and 78-byte `WBPROJECT` WHDLoad icons. Tested and verified out-of-the-box via **Load Content** in **RetroArch (`PUAE` core)** and **THEA1200 (`Amiberry`)**.
-- **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** standard WHDLoad ZIP archive supported natively without external `python-lhafile` plugins. 1-click auto-boot via `S/startup-sequence` — simply mount the `.zip` as Hard Drive (`DH0`) on an A1200 (8 MB Fast RAM) profile and click **Start**.
 
 ---
 

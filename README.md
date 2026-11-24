@@ -6,7 +6,7 @@
 
 **Bare-metalowy silnik wektorowy M68020+ / AGA + Blitter AA 320x256 @ 50.00 FPS PAL** (*malek69 & Gemini AI, 2026*)
 
-## Pobieranie i Podglad (v1.1.0 — 3 Obozy Wydawnicze)
+## Pobieranie i Podgląd (v1.1.0 — 3 Obozy Wydawnicze)
 
 | Median A1200 v1.1.0 | Bad Apple!! A1200 v1.1.0 |
 | :---: | :---: |
@@ -20,11 +20,17 @@
 | **`thea1200`** | Konsola **THEA1200**, **Amiberry (PC)**, **FS-UAE** | Natywne **`640x256` AGA Hi-Res** + Fast-RAM `movem.l` @ `50 FPS` | `12.1–16.5 kHz` PCM, do `650` wierzcholkow |
 | **`060`** | Karty turbo **`MC68060` (50+ MHz, Z3 Fast RAM)** | **`640x512` AGA Hi-Res Interlace** (`1:1`, 0 schodkow) | `16.5 kHz` PCM, do `1200` wierzcholkow |
 
-## Wymagania i Sterowanie
-- **Sprzet:** Amiga 1200 (68EC020+ 14 MHz, AGA, **2 MB Chip RAM + 8 MB Fast RAM**), **THEA1200**, FS-UAE lub WinUAE (WHDLoad Slave v17 bez Kickstart ROM).
-- **Wyjscie:** `LMB`, **Fire (Joystick Port 2 / THEA1200)** lub `ESC`.
+## Warianty Paczek i Kompatybilność (v1.1.0)
+- **`.lha` (`*_AGA_THEA1200.lha` — RetroArch PUAE / THEA1200 / Real A1200):** spakowane z naglowkami Amiga LHA Level 1 oraz 78-bajtowymi ikonami WHDLoad `WBPROJECT`. Przetestowane przez **Load Content** w **RetroArch (`PUAE`)** oraz **THEA1200 (`Amiberry`)**.
+- **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** archiwum WHDLoad ZIP obslugiwane natywnie bez zewnetrznych wtyczek `python-lhafile`. Auto-boot jednym kliknieciem przez `S/startup-sequence` — zamontuj `.zip` jako dysk twardy (`DH0`) na profilu A1200 (8 MB Fast RAM) i kliknij **Start**.
 
-## Mozliwosci silnika
+---
+
+## Wymagania i Sterowanie
+- **Sprzęt:** Amiga 1200 (68EC020+ 14 MHz, AGA, **2 MB Chip RAM + 8 MB Fast RAM**), **THEA1200**, FS-UAE lub WinUAE (WHDLoad Slave v17 bez Kickstart ROM).
+- **Wyjście:** `LMB`, **Fire (Joystick Port 2 / THEA1200)** lub `ESC`.
+
+## Możliwości silnika
 - **Rasteryzator N-gon XOR LUT:** szybkie wypelnianie wielokatow i wycinanie otworow (cutouts) w oparciu o 512 KB tablice prefiksow w Fast RAM.
 - **Potok M68020+ / AGA & Paula 4CH DMA:** podwojne buforowanie VBL `50.00 FPS PAL`, 4-kanalowe audio PCM (filtr LED wyl.) oraz konwertery wideo `tools/`.
 
@@ -45,16 +51,10 @@
 
 ---
 
-## Narzedzia Deweloperskie (`tools/`)
+## Narzędzia Deweloperskie (`tools/`)
 
 - **`tools/build_median.py`** — dedykowany potok przetwarzajacy material *Median* (`624x496` -> `320x256` AGA + Blitter AA @ `50 FPS`, separacja warstw czerni i czerwieni, upraszczanie wielokatow i budowa paczek `.lha` + `*_FSUAE.zip`).
 - **`tools/build_demo.py`** — uniwersalny konwerter wideo na strumien wektorowy `320x256` AGA + Blitter AA AGA (`--video`, `--fps`, `--threshold`, `--crop-43`, `--thin-lines`) automatycznie kompilujacy binarke `vasmm68k_mot`, WHDLoad Slave oraz archiwa `.lha` i `*_FSUAE.zip`.
-
----
-
-## Warianty Paczek i Kompatybilnosc (v1.1.0)
-- **`.lha` (`*_AGA_THEA1200.lha` — RetroArch PUAE / THEA1200 / Real A1200):** spakowane z naglowkami Amiga LHA Level 1 oraz 78-bajtowymi ikonami WHDLoad `WBPROJECT`. Przetestowane przez **Load Content** w **RetroArch (`PUAE`)** oraz **THEA1200 (`Amiberry`)**.
-- **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** archiwum WHDLoad ZIP obslugiwane natywnie bez zewnetrznych wtyczek `python-lhafile`. Auto-boot jednym kliknieciem przez `S/startup-sequence` — zamontuj `.zip` jako dysk twardy (`DH0`) na profilu A1200 (8 MB Fast RAM) i kliknij **Start**.
 
 ---
 

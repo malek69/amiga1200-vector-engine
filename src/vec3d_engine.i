@@ -34,7 +34,7 @@ draw_polygon_mode:
     move.w  (a1)+,d7
     cmp.w   #3,d7
     blo.w   .pa
-    move.w  #639,bbox_x1
+    move.w  #319,bbox_x1
     move.w  #0,bbox_x2
     move.w  #255,bbox_y1
     move.w  #0,bbox_y2
@@ -60,7 +60,7 @@ draw_polygon_mode:
     lsr.w   #4,d0
     move.w  bbox_x2(pc),d1
     lsr.w   #4,d1
-    cmp.w   #39,d1
+    cmp.w   #19,d1
     bge.s   .bx_ok
     addq.w  #1,d1
 .bx_ok:
@@ -69,19 +69,19 @@ draw_polygon_mode:
     move.w  d3,d5
     sub.w   d2,d5
     move.w  d2,d6
-    mulu.w  #80,d6
+    mulu.w  #40,d6
     move.w  d0,d7
     add.w   d7,d7
     add.w   d7,d6
     lea     edge_buf,a0
     add.l   d6,a0
     move.w  (sp)+,d0
-    lea     fast_bpl1,a2
+    move.l  draw_bpl1(pc),a2
     cmp.w   #2,d0
     bne.s   .to
-    lea     fast_bpl2,a2
+    move.l  draw_bpl2(pc),a2
 .to: add.l  d6,a2
-    moveq   #80,d7
+    moveq   #40,d7
     sub.w   d4,d7
     sub.w   d4,d7
     subq.w  #2,d7
@@ -110,14 +110,10 @@ draw_polygon_mode:
 .ed: movem.l d0-d7/a0,-(sp)
     cmp.w   d1,d3
     beq.w   .ex
-    bgt.s   .dn
+    bgt.s   .ys
     exg     d0,d2
     exg     d1,d3
-.dn: cmp.w  #255,d1
-    bgt.w   .ex
-    tst.w   d3
-    ble.w   .ex
-    cmp.w   bbox_y1(pc),d1
+.ys: cmp.w  bbox_y1(pc),d1
     bge.s   .ny1
     move.w  d1,bbox_y1
 .ny1: move.w d3,d6
@@ -148,7 +144,7 @@ draw_polygon_mode:
     move.w  #$8000,d0
     lea     edge_buf,a0
     move.w  d1,d4
-    mulu.w  #80,d4
+    mulu.w  #40,d4
     add.l   d4,a0
     subq.w  #1,d6
 .sy: move.l d0,d4
@@ -156,16 +152,16 @@ draw_polygon_mode:
     tst.w   d4
     bpl.s   .sx0
     moveq   #0,d4
-.sx0: cmp.w #638,d4
+.sx0: cmp.w #318,d4
     ble.s   .sx1
-    move.w  #638,d4
+    move.w  #318,d4
 .sx1: move.w d4,d5
     lsr.w   #3,d5
     not.w   d4
     and.w   #7,d4
     bchg    d4,(a0,d5.w)
     add.l   d7,d0
-    lea     80(a0),a0
+    lea     40(a0),a0
     dbf     d6,.sy
 .ex: movem.l (sp)+,d0-d7/a0
     rts

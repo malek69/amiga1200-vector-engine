@@ -3,7 +3,7 @@
 ws: moveq #-1,d0
     rts
     dc.b "WHDLOADS"
-    dc.w 17,$0026
+    dc.w 17,$0024
     dc.l $200000,0
     dc.w _start-ws,0,0
     dc.b 0,$59
@@ -13,7 +13,7 @@ ws: moveq #-1,d0
     dc.w 0,0
 _n: dc.b "{DEMO_TITLE}",0
 _c: dc.b "malek69 {DEMO_CREDITS} Gemini AI (2026)",0
-_i: dc.b "AGA 640x256 Hi-Res Vector Engine + 16.5kHz Paula Audio",0
+_i: dc.b "AGA 320x256 Vector Engine + 16.5kHz Paula Audio",0
 _e: dc.b "{EXE_NAME}",0
     even
 rl: dc.l 0
@@ -62,7 +62,7 @@ _start:
     addq.l #4,a0
     move.l (a0)+,d6
     addq.l #8,a0
-    move.l #$00010000,d3
+    move.l #$00040000,d3
     move.l ws+$20(pc),d4
     lea hb(pc),a3
     move.w d6,d7
@@ -126,7 +126,7 @@ _start:
     bne.s .rl
     bra.s .dr
 .rn: movec cacr,d0
-    or.w #$0909,d0
+    or.w #$0808,d0
     movec d0,cacr
     move.l hb(pc),a0
     jsr (a0)

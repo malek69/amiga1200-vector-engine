@@ -50,7 +50,7 @@ def main():
     hz = max(8000, min(16497, int(1550000 / max(1.0, dur))))
     per = round(3546895 / hz)
     hz_r = 3546895.0 / per
-    print(f"[1/4] Audio: {hz_r:.1f} Hz (AUD0PER={per}) | Video: {args.fps} FPS @ 640x256 Hi-Res", flush=True)
+    print(f"[1/4] Audio: {hz_r:.1f} Hz (AUD0PER={per}) | Video: {args.fps} FPS @ 320x256 AGA + Blitter AA", flush=True)
     ap_p = os.path.join(sd, "audio_player.i")
     ap_t = open(ap_p).read()
     open(ap_p, "w").write(re.sub(r"#[0-9]+(?=,AUD[0-3]PER)", f"#{per}", ap_t))
@@ -60,14 +60,14 @@ def main():
     if args.crop_43 and (w_s / max(1, h_s)) > 1.5:
         cw = int(round(h_s * 1.28))
         x0 = (w_s - cw) // 2
-    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=624:248:flags=lanczos,fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "gray", "-"], stdout=subprocess.PIPE)
-    fb, uniq, fl, pr_raw, pr_lbl = 624 * 248, {}, list(), None, None
+    proc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{ch}:{x0}:{y0},scale=312:248:flags=area,fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "gray", "-"], stdout=subprocess.PIPE)
+    fb, uniq, fl, pr_raw, pr_lbl = 312 * 248, {}, list(), None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
     while True:
         raw = proc.stdout.read(fb)
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
-        g = np.frombuffer(raw, dtype=np.uint8).reshape((248, 624))
+        g = np.frombuffer(raw, dtype=np.uint8).reshape((248, 312))
         db = cv2.medianBlur(g, 3) < args.threshold
         dp = list()
         if np.any(db):
@@ -84,20 +84,20 @@ def main():
                     while par != -1: d += 1; par = int(hr.item(par, 3))
                     items.append((d, i))
                 items.sort()
-                for eps in (1.5, 2.1, 2.9, 3.8):
+                for eps in (1.05, 1.55, 2.2, 3.0):
                     dp, v_tot = list(), 0
                     for d, i in items:
-                        if cv2.contourArea(cnts[i]) < (36.0 if (d & 1) else 18.0): continue
+                        if cv2.contourArea(cnts[i]) < (22.0 if (d & 1) else 10.0): continue
                         pts = cv2.approxPolyDP(cnts[i], eps, True).reshape(-1, 2)
                         m = list()
                         for (x, y) in pts:
-                            pt = (int(x) + 8, int(y) + 4)
+                            pt = (int(x) + 4, int(y) + 4)
                             if not m or m[-1] != pt: m.append(pt)
                         while len(m) >= 3 and m[0] == m[-1]: m.pop()
                         if len(m) >= 3:
                             dp.append((d & 1, tuple(m)))
                             v_tot += len(m)
-                    if v_tot <= 460: break
+                    if v_tot <= 550: break
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
         pr_raw, pr_lbl = raw, uniq[key]
@@ -109,6 +109,8 @@ def main():
         lines += [f"{l}:", "    dc.w $0111"]
         for op, p in dp: lines.append(f"    dc.w {op},{len(p)}," + ",".join(f"{x},{y}" for x, y in p))
         lines.append("    dc.w -1")
+    g_t = open(os.path.join(sd, "gfx_engine.i")).read().replace("move.l  draw_bpl2(pc),a0" + chr(10) + "    bsr.w   blit_clear_full" + chr(10), ""); open(os.path.join(sd, "gfx_engine.i"), "w").write(g_t)
+    m_t = open(os.path.join(sd, "main.s")).read().replace("move.l  pcm_played(pc),d0", "move.l  vbl_tick(pc),d0").replace("mulu.l  #10,d0", "; 50Hz").replace("divu.l  #5499,d0", "; 50Hz"); open(os.path.join(sd, "main.s"), "w").write(m_t)
     open(os.path.join(sd, "scene_data.i"), "w").write(chr(10).join(lines) + chr(10))
     exe_out = os.path.join(repo, "releases", args.name)
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)

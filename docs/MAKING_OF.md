@@ -139,3 +139,7 @@
    resload_FlushCache (offset 64) i uruchomi demo. Nastepnie spakuj projekt
    do archiwum LHA Level-1 z ikonami AmigaOS (.info) pod konsole THEA1200."
 ==============================================================================
+
+## Rozdział 6: Droga do v1.1.0 — Trzy Obozy Demosceny i Pułapki Sprzętowe AGA
+
+Wersja **v1.1.0** wprowadza profile (`standard`, `thea1200`, `060`), optymalizacje DMA Hi-Res, ochronę rejestru `D7` w `movem.l`, obsługę przeplotu `LOF` oraz hybrydowe archiwa `.lha`.

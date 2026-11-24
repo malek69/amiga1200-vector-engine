@@ -24,8 +24,11 @@ mainloop:
     bsr.w   wait_vbl
     btst    #6,CIAAPRA
     beq.s   shutdown
+    cmp.l   #50,vbl_tick(pc)
+    blo.s   .no_joy
     btst    #7,CIAAPRA
     beq.s   shutdown
+.no_joy:
     cmp.b   #$75,$bfec01
     bne.w   mainloop
 shutdown:

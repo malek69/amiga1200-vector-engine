@@ -59,3 +59,9 @@ Pelna dokumentacja procesu powstawania projektu znajduje sie w [docs/MAKING_OF.m
 - **[PROMPT 2 — Rasteryzator wielokatow N-gon z 512 KB XOR LUT w Fast RAM]:** *"Napisz w asemblerze M68020 (vasmm68k_mot) szybki rasteryzator wielokatow dla Amigi 1200 (AGA AGA + Blitter AA 320x256 PAL, double-buffering). Prekompiluj w Fast RAM 512 KB tablice wypelniania XOR scanline (fill_lut), rysuj krawedzie metoda bchg do edge_buf, wypelniaj wielokaty w Fast RAM i kopiuj gotowe bitplany rozwinietymi instrukcjami movem.l (48 B/iter) do Chip RAM."*
 - **[PROMPT 3 — Dzwiek Paula DMA IRQ Level 4 i filtr LED]:** *"Napisz sterownik audio w asemblerze M68020 dla ukladu Paula (4 kanaly DMA, podwojny bufor 2048 bajtow w Chip RAM) obslugiwany sprzetowym przerwaniem Audio Level 4 ($70) z wylaczeniem sprzetowego filtra dolnoprzepustowego LED ($BFE001 bit 1)."*
 - **[PROMPT 4 — Autorski WHDLoad Slave v17 bez Kickstart ROM + THEA1200 Joy2]:** *"Napisz od zera w asemblerze M68020 plik WHDLoad Slave (WHDLOADS v17, ws_KickSize=0, bez wymaganego obrazu Kickstartu), ktory wczyta plik AmigaDOS Hunk, przydzieli sekcje CHIP i FAST, wykona relokacje HUNK_RELOC32, wlaczy cache M68020 (CACR) i pozwoli wyjsc przez LMB, Fire na Joystick Port 2 (THEA1200) lub ESC."*
+## Trzy Obozy Wydawnicze (3 Target Profiles)
+| Profil (`--profile`) | Platforma docelowa | Rozdzielczosc i potok | Audio i detale |
+| :--- | :--- | :--- | :--- |
+| **`standard`** | Bazowa **Amiga 1200 (`68020`)**, **RetroArch (Android)** | `320x256` AGA + 8-odcieniowy **Blitter AA** @ `50 FPS` | `8–16.5 kHz` PCM, do `550` wierzcholkow |
+| **`thea1200`** | Konsola **THEA1200**, **Amiberry (PC)**, **FS-UAE** | Natywne **`640x256` AGA Hi-Res** + Fast-RAM `movem.l` @ `50 FPS` | `12.1–16.5 kHz` PCM, do `650` wierzcholkow |
+| **`060`** | Karty turbo **`MC68060` (50+ MHz, Z3 Fast RAM)** | **`640x512` AGA Hi-Res Interlace** (`1:1`, 0 schodkow) | `16.5 kHz` PCM, do `1200` wierzcholkow |

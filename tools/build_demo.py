@@ -51,7 +51,7 @@ def main():
     hz_r = 3546895.0 / per
     print(f"[1/4] Profil={args.profile} | Audio={hz_r:.1f}Hz (PER={per}) | {vw+ox*2}x{vh+oy*2}@{args.fps}FPS", flush=True)
     ap_p = os.path.join(sd, "audio_player.i")
-    open(ap_p, "w").write(re.sub(r"#[0-9]+(?=,AUD[0-3]PER)", f"#{per}", open(ap_p).read()))
+    ap_txt = open(ap_p).read(); open(ap_p, "w").write(re.sub(r"#[0-9]+(?=,AUD[0-3]PER)", f"#{per}", ap_txt))
     subprocess.run(("ffmpeg", "-y", "-v", "error", "-i", args.audio or args.video, "-vn", "-af", f"highpass=f=40,lowpass=f=5200,alimiter=limit=0.82,aresample={int(round(hz_r))}:resampler=soxr,volume=0.80", "-f", "s8", "-ac", "1", "-ar", str(int(round(hz_r))), os.path.join(sd, "median_audio.raw")), check=True)
     w_s, h_s = map(int, subprocess.check_output(("ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", args.video), text=True).strip().split(","))
     cw = int(round(h_s * 1.28)) if (args.crop_43 and (w_s / max(1, h_s)) > 1.5) else w_s

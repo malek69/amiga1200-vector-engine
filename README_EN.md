@@ -6,12 +6,12 @@
 
 **Bare-metal M68020+ / AGA + Blitter AA 320x256 @ 50.00 FPS PAL Vector Demo Engine** (*malek69 & Gemini AI, 2026*)
 
-## Downloads & Preview (v1.1.0 Latest)
+## Downloads & Preview (v1.1.0 — 3 Target Profiles)
 
-| Median A1200 v1.1.0 (320x256) | Bad Apple!! A1200 v1.1.0 (320x256) |
+| Median A1200 v1.1.0 | Bad Apple!! A1200 v1.1.0 |
 | :---: | :---: |
 | ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
-| **[Download .LHA (THEA1200/RetroArch)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/MedianA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP (FS-UAE/WinUAE)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/MedianA1200_AGA_THEA1200_FSUAE.zip)** | **[Download .LHA (THEA1200/RetroArch)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/BadappleA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP (FS-UAE/WinUAE)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/BadappleA1200_AGA_THEA1200_FSUAE.zip)** |
+| **1. Standard `020` (`320x256` + Blitter AA — Stock A1200 / Android):**<br>[.LHA](https://github.com/MedianA1200_AGA_THEA1200.lha) · [.ZIP (FS-UAE/WinUAE)](https://github.com/MedianA1200_AGA_THEA1200_FSUAE.zip)<br>**2. THEA1200 (`640x256` AGA Hi-Res):**<br>[.LHA](https://github.com/MedianA1200_AGA_HiRes640.lha) · [.ZIP (FS-UAE/WinUAE)](https://github.com/MedianA1200_AGA_HiRes640_FSUAE.zip)<br>**3. Turbo `MC68060` (`640x512` Interlace 1:1):**<br>[.LHA](https://github.com/MedianA1200_AGA_060_HiRes512.lha) · [.ZIP (FS-UAE/WinUAE)](https://github.com/MedianA1200_AGA_060_HiRes512_FSUAE.zip) | **1. Standard `020` (`320x256` + Blitter AA — Stock A1200 / Android):**<br>[.LHA](https://github.com/BadappleA1200_AGA_THEA1200.lha) · [.ZIP (FS-UAE/WinUAE)](https://github.com/BadappleA1200_AGA_THEA1200_FSUAE.zip)<br>**2. THEA1200 (`640x256` AGA Hi-Res):**<br>[.LHA](https://github.com/BadappleA1200_AGA_HiRes640.lha) · [.ZIP (FS-UAE/WinUAE)](https://github.com/BadappleA1200_AGA_HiRes640_FSUAE.zip)<br>**3. Turbo `MC68060` (`640x512` Interlace 1:1):**<br>[.LHA](https://github.com/BadappleA1200_AGA_060_HiRes512.lha) · [.ZIP (FS-UAE/WinUAE)](https://github.com/BadappleA1200_AGA_060_HiRes512_FSUAE.zip) |
 
 ## Requirements & Controls
 - **Hardware:** Amiga 1200 (68EC020+ 14 MHz, AGA, **2 MB Chip RAM + 8 MB Fast RAM**), **THEA1200**, FS-UAE, or WinUAE (Kickstart-free WHDLoad Slave v17).

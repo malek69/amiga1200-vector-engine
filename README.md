@@ -58,3 +58,19 @@ Ten bare-metalowy silnik wektorowy oraz oba pelnometrazowe dema (*Median A1200* 
 - *"Napisz bare-metalowa procedure M68020 dla Amigi AGA, ktora prekompiluje w Fast RAM (`section vec_fast,bss_p`) 512 KB tablice wypelniania XOR scanline (`fill_lut`) z propagacja przeniesienia miedzy 16-bitowymi slowami."*
 - *"Zoptymalizuj petle 50 Hz PAL na Amidze 1200 w trybie AGA Hi-Res `640x256` (`BPLCON0=$A200`, `FMODE=$0003`): wyczysc bufory w Fast RAM przez rozwiniete `movem.l`, zrasteryzuj wielokaty N-gon z wycinaniem otworow i skopiuj gotowa klatke blokami po 48 B do Chip RAM."*
 - *"Stworz minimalny WHDLoad Slave v17 bez wymaganego pliku Kickstart (`ws_KickSize=0`), ktory relokuje wielosekcyjny plik wykonywalny do Chip/Fast RAM, wlacza cache M68020 (`CACR`) i pozwala wyjsc przez LMB, Fire (Joystick Port 2 / THEA1200) lub ESC."*
+
+---
+
+## Warianty Paczek i Kompatybilnosc (v1.1.0)
+- **`.lha` (`*_AGA_THEA1200.lha` — RetroArch PUAE / THEA1200 / Real A1200):** spakowane z naglowkami Amiga LHA Level 1 oraz 78-bajtowymi ikonami WHDLoad `WBPROJECT`. Przetestowane przez **Load Content** w **RetroArch (`PUAE`)** oraz **THEA1200 (`Amiberry`)**.
+- **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** archiwum WHDLoad ZIP obslugiwane natywnie bez zewnetrznych wtyczek `python-lhafile`. Auto-boot jednym kliknieciem przez `S/startup-sequence` — zamontuj `.zip` jako dysk twardy (`DH0`) na profilu A1200 (8 MB Fast RAM) i kliknij **Start**.
+
+---
+
+## Prompty dla AI (Vibe Coding Edition — Odtworzenie i Rozbudowa)
+Pelna dokumentacja procesu powstawania projektu znajduje sie w [docs/MAKING_OF.md](docs/MAKING_OF.md) oraz [docs/ENGINE_v1.1.md](docs/ENGINE_v1.1.md). Ponizsze prompty pozwalaja odtworzyc lub rozbudowac poszczegolne moduly silnika:
+
+- **[PROMPT 1 — Ekstrakcja wektorow HD i audio z wideo PC -> Asembler M68020]:** *"Napisz skrypt w Pythonie (OpenCV + NumPy + FFmpeg), ktory wyciagnie z pliku wideo 50 FPS sciezke dzwiekowa 8-bit signed PCM (z filtrem dolnoprzepustowym i limiterem) oraz strumien zamknietych wielokatow N-katnych w rozdzielczosci Amigi AGA Hi-Res 640x256 z zachowaniem proporcji. Otwory wewnetrzne oznacz jako tryb wycinania (HIERARCHY depth & 1), a czerwone warstwy zapisz na drugim bitplanie. Wygeneruj plik scene_data.i w skladni vasm z deduplikacja klatek."*
+- **[PROMPT 2 — Rasteryzator wielokatow N-gon z 512 KB XOR LUT w Fast RAM]:** *"Napisz w asemblerze M68020 (vasmm68k_mot) szybki rasteryzator wielokatow dla Amigi 1200 (AGA Hi-Res 640x256 PAL, double-buffering). Prekompiluj w Fast RAM 512 KB tablice wypelniania XOR scanline (fill_lut), rysuj krawedzie metoda bchg do edge_buf, wypelniaj wielokaty w Fast RAM i kopiuj gotowe bitplany rozwinietymi instrukcjami movem.l (48 B/iter) do Chip RAM."*
+- **[PROMPT 3 — Dzwiek Paula DMA IRQ Level 4 i filtr LED]:** *"Napisz sterownik audio w asemblerze M68020 dla ukladu Paula (4 kanaly DMA, podwojny bufor 2048 bajtow w Chip RAM) obslugiwany sprzetowym przerwaniem Audio Level 4 ($70) z wylaczeniem sprzetowego filtra dolnoprzepustowego LED ($BFE001 bit 1)."*
+- **[PROMPT 4 — Autorski WHDLoad Slave v17 bez Kickstart ROM + THEA1200 Joy2]:** *"Napisz od zera w asemblerze M68020 plik WHDLoad Slave (WHDLOADS v17, ws_KickSize=0, bez wymaganego obrazu Kickstartu), ktory wczyta plik AmigaDOS Hunk, przydzieli sekcje CHIP i FAST, wykona relokacje HUNK_RELOC32, wlaczy cache M68020 (CACR) i pozwoli wyjsc przez LMB, Fire na Joystick Port 2 (THEA1200) lub ESC."*

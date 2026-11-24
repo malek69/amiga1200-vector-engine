@@ -4,7 +4,7 @@
 
 # Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.1.0
 
-**Bare-metalowy silnik wektorowy M68020+ / AGA AGA + Blitter AA 320x256 @ 50.00 FPS PAL** (*malek69 & Gemini AI, 2026*)
+**Bare-metalowy silnik wektorowy M68020+ / AGA + Blitter AA 320x256 @ 50.00 FPS PAL** (*malek69 & Gemini AI, 2026*)
 
 ## Pobieranie i Podglad (v1.1.0 Latest)
 
@@ -22,7 +22,7 @@
 - **Potok M68020+ / AGA & Paula 4CH DMA:** podwojne buforowanie VBL `50.00 FPS PAL`, 4-kanalowe audio PCM (filtr LED wyl.) oraz konwertery wideo `tools/`.
 
 ## Co nowego w v1.1.0
-- **AGA AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`, `FMODE = $0003`):** 2x wyzsza ostrosc pozioma wektorow z 64-bitowym DMA bez dlawienia CPU.
+- **AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`, `FMODE = $0003`):** 2x wyzsza ostrosc pozioma wektorow z 64-bitowym DMA bez dlawienia CPU.
 - **Fast-RAM Backbuffer + `movem.l` Burst & THEA1200:** rysowanie w Fast RAM, transfer blokowy `48 B/iter` do Chip RAM oraz wyjscie padem THEA1200.
 
 ## Architektura i Moduly Silnika (`src/`)
@@ -30,7 +30,7 @@
 | Modul | Rola w silniku | Mechanizmy sprzetowe i algorytmy |
 | :--- | :--- | :--- |
 | **`main.s`** | Glowna petla 50 Hz PAL | Synchronizacja VBL (`50.00 FPS`), czyszczenie Fast RAM oraz rozwiniety transfer `movem.l` (`48 B/iter`) `Fast -> Chip` |
-| **`gfx_engine.i`** | Inicjalizacja AGA i Coppera | Przejecie sprzetu (`sys_takeover`), tryb **AGA AGA + Blitter AA `320x256`** (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`), 64-bitowe bitplany (`FMODE = $0003`), podwojne buforowanie VBL |
+| **`gfx_engine.i`** | Inicjalizacja AGA i Coppera | Przejecie sprzetu (`sys_takeover`), tryb **AGA + Blitter AA `320x256`** (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`), 64-bitowe bitplany (`FMODE = $0003`), podwojne buforowanie VBL |
 | **`vec3d_engine.i`** | Rasteryzator wielokatow N-gon | Skanowanie krawedzi 16-bitowych (`0..639 x 0..255`) do `edge_buf` i wypelnianie z wycinaniem otworow (cutouts) przez 512 KB tablice prefiksow `fill_lut` w Fast RAM |
 | **`scene_player.i`** | Dekoder strumienia klatek | Odczyt tablicy klatek `vec_frame_table` i dyspozycja wielokatow na aktywne bitplany AGA |
 | **`audio_player.i`** | Odtwarzacz Paula 4CH DMA | Strumieniowe audio PCM z Fast RAM przez podwojne bufory `2048 B` w Chip RAM (IRQ Level 4) z wylaczonym filtrem LED |
@@ -55,8 +55,8 @@
 ## Prompty dla AI (Vibe Coding Edition — Odtworzenie i Rozbudowa)
 Pelna dokumentacja procesu powstawania projektu znajduje sie w [docs/MAKING_OF.md](docs/MAKING_OF.md) oraz [docs/ENGINE_v1.1.md](docs/ENGINE_v1.1.md). Ponizsze prompty pozwalaja odtworzyc lub rozbudowac poszczegolne moduly silnika:
 
-- **[PROMPT 1 — Ekstrakcja wektorow HD i audio z wideo PC -> Asembler M68020]:** *"Napisz skrypt w Pythonie (OpenCV + NumPy + FFmpeg), ktory wyciagnie z pliku wideo 50 FPS sciezke dzwiekowa 8-bit signed PCM (z filtrem dolnoprzepustowym i limiterem) oraz strumien zamknietych wielokatow N-katnych w rozdzielczosci Amigi AGA AGA + Blitter AA 320x256 z zachowaniem proporcji. Otwory wewnetrzne oznacz jako tryb wycinania (HIERARCHY depth & 1), a czerwone warstwy zapisz na drugim bitplanie. Wygeneruj plik scene_data.i w skladni vasm z deduplikacja klatek."*
-- **[PROMPT 2 — Rasteryzator wielokatow N-gon z 512 KB XOR LUT w Fast RAM]:** *"Napisz w asemblerze M68020 (vasmm68k_mot) szybki rasteryzator wielokatow dla Amigi 1200 (AGA AGA + Blitter AA 320x256 PAL, double-buffering). Prekompiluj w Fast RAM 512 KB tablice wypelniania XOR scanline (fill_lut), rysuj krawedzie metoda bchg do edge_buf, wypelniaj wielokaty w Fast RAM i kopiuj gotowe bitplany rozwinietymi instrukcjami movem.l (48 B/iter) do Chip RAM."*
+- **[PROMPT 1 — Ekstrakcja wektorow HD i audio z wideo PC -> Asembler M68020]:** *"Napisz skrypt w Pythonie (OpenCV + NumPy + FFmpeg), ktory wyciagnie z pliku wideo 50 FPS sciezke dzwiekowa 8-bit signed PCM (z filtrem dolnoprzepustowym i limiterem) oraz strumien zamknietych wielokatow N-katnych w rozdzielczosci Amigi AGA + Blitter AA 320x256 z zachowaniem proporcji. Otwory wewnetrzne oznacz jako tryb wycinania (HIERARCHY depth & 1), a czerwone warstwy zapisz na drugim bitplanie. Wygeneruj plik scene_data.i w skladni vasm z deduplikacja klatek."*
+- **[PROMPT 2 — Rasteryzator wielokatow N-gon z 512 KB XOR LUT w Fast RAM]:** *"Napisz w asemblerze M68020 (vasmm68k_mot) szybki rasteryzator wielokatow dla Amigi 1200 (AGA + Blitter AA 320x256 PAL, double-buffering). Prekompiluj w Fast RAM 512 KB tablice wypelniania XOR scanline (fill_lut), rysuj krawedzie metoda bchg do edge_buf, wypelniaj wielokaty w Fast RAM i kopiuj gotowe bitplany rozwinietymi instrukcjami movem.l (48 B/iter) do Chip RAM."*
 - **[PROMPT 3 — Dzwiek Paula DMA IRQ Level 4 i filtr LED]:** *"Napisz sterownik audio w asemblerze M68020 dla ukladu Paula (4 kanaly DMA, podwojny bufor 2048 bajtow w Chip RAM) obslugiwany sprzetowym przerwaniem Audio Level 4 ($70) z wylaczeniem sprzetowego filtra dolnoprzepustowego LED ($BFE001 bit 1)."*
 - **[PROMPT 4 — Autorski WHDLoad Slave v17 bez Kickstart ROM + THEA1200 Joy2]:** *"Napisz od zera w asemblerze M68020 plik WHDLoad Slave (WHDLOADS v17, ws_KickSize=0, bez wymaganego obrazu Kickstartu), ktory wczyta plik AmigaDOS Hunk, przydzieli sekcje CHIP i FAST, wykona relokacje HUNK_RELOC32, wlaczy cache M68020 (CACR) i pozwoli wyjsc przez LMB, Fire na Joystick Port 2 (THEA1200) lub ESC."*
 ## Trzy Obozy Wydawnicze (3 Target Profiles)

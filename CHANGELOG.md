@@ -2,8 +2,8 @@
 
 # Historia Zmian — A1200 Vector Engine
 
-## v1.1.0 — AGA AGA + Blitter AA 320x256 (2026-11-24)
-- **Natywny tryb AGA AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`):** 2x wyzsza ostrosc pozioma wektorow przy 50.00 FPS PAL.
+## v1.1.0 — AGA + Blitter AA 320x256 (2026-11-24)
+- **Natywny tryb AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`):** 2x wyzsza ostrosc pozioma wektorow przy 50.00 FPS PAL.
 - **64-bitowe bitplany (`FMODE = $0003`) i Fast-RAM Pipeline:** rasteryzacja w Fast RAM oraz szybki transfer `movem.l` (48 B/iter) do Chip RAM.
 - **Obsluga pada THEA1200:** wyjscie przyciskiem Fire na Joystick Port 2 (`$BFE001` bit 7) obok LPM i `ESC`.
 - **Strumienie v1.1.0:** przeliczone wektory `320x256` dla *Median A1200* (`5.62 MB`) i *Bad Apple!! A1200* (`5.06 MB`).

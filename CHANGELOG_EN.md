@@ -2,8 +2,8 @@
 
 # Changelog — A1200 Vector Engine
 
-## v1.1.0 — AGA AGA + Blitter AA 320x256 (2026-11-24)
-- **Native AGA AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`):** 2x horizontal vector sharpness at locked 50.00 FPS PAL.
+## v1.1.0 — AGA + Blitter AA 320x256 (2026-11-24)
+- **Native AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`):** 2x horizontal vector sharpness at locked 50.00 FPS PAL.
 - **64-bit Bitplanes (`FMODE = $0003`) & Fast-RAM Pipeline:** Fast-RAM rasterization with unrolled `movem.l` (48 B/iter) burst copy to Chip RAM.
 - **THEA1200 Gamepad Support:** exit via Joystick Port 2 Fire (`$BFE001` bit 7) alongside LMB and `ESC`.
 - **v1.1.0 Vector Streams:** re-encoded `320x256` streams for *Median A1200* (`5.62 MB`) and *Bad Apple!! A1200* (`5.06 MB`).

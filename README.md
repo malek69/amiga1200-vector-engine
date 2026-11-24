@@ -1,4 +1,31 @@
-[**Polski**](README.md) | [English](README_EN.md) | ...## Architektura i Moduly Silnika (`src/`)
+[**Polski**](README.md) | [English](README_EN.md) | [Historia Zmian (PL)](CHANGELOG.md) | [Changelog (EN)](CHANGELOG_EN.md)
+
+![Logo](docs/engine_logo.png)
+
+# Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.1.0
+
+**Bare-metalowy silnik wektorowy M68020+ / AGA Hi-Res 640x256 @ 50.00 FPS PAL** (*malek69 & Gemini AI, 2026*)
+
+## Pobieranie i Podglad (v1.1.0 Latest)
+
+| Median A1200 v1.1.0 (640x256) | Bad Apple!! A1200 v1.1.0 (640x256) |
+| :---: | :---: |
+| ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
+| **[Pobierz .LHA (THEA1200/RetroArch)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/MedianA1200_AGA_THEA1200.lha)**<br>**[Pobierz .ZIP (FS-UAE/WinUAE)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/MedianA1200_AGA_THEA1200_FSUAE.zip)** | **[Pobierz .LHA (THEA1200/RetroArch)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/BadappleA1200_AGA_THEA1200.lha)**<br>**[Pobierz .ZIP (FS-UAE/WinUAE)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/BadappleA1200_AGA_THEA1200_FSUAE.zip)** |
+
+## Wymagania i Sterowanie
+- **Sprzet:** Amiga 1200 (68EC020+ 14 MHz, AGA, **2 MB Chip RAM + 8 MB Fast RAM**), **THEA1200**, FS-UAE lub WinUAE (WHDLoad Slave v17 bez Kickstart ROM).
+- **Wyjscie:** `LMB`, **Fire (Joystick Port 2 / THEA1200)** lub `ESC`.
+
+## Mozliwosci silnika
+- **Rasteryzator N-gon XOR LUT:** szybkie wypelnianie wielokatow i wycinanie otworow (cutouts) w oparciu o 512 KB tablice prefiksow w Fast RAM.
+- **Potok M68020+ / AGA & Paula 4CH DMA:** podwojne buforowanie VBL `50.00 FPS PAL`, 4-kanalowe audio PCM (filtr LED wyl.) oraz konwertery wideo `tools/`.
+
+## Co nowego w v1.1.0
+- **AGA Hi-Res `640x256` (`BPLCON0 = $A200`, `DDFSTOP = $00CC`, `FMODE = $0003`):** 2x wyzsza ostrosc pozioma wektorow z 64-bitowym DMA bez dlawienia CPU.
+- **Fast-RAM Backbuffer + `movem.l` Burst & THEA1200:** rysowanie w Fast RAM, transfer blokowy `48 B/iter` do Chip RAM oraz wyjscie padem THEA1200.
+
+## Architektura i Moduly Silnika (`src/`)
 
 | Modul | Rola w silniku | Mechanizmy sprzetowe i algorytmy |
 | :--- | :--- | :--- |

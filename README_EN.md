@@ -1,15 +1,29 @@
+[Polski](README.md) | [**English**](README_EN.md) | [Historia Zmian (PL)](CHANGELOG.md) | [Changelog (EN)](CHANGELOG_EN.md)
 
----
+![Logo](docs/engine_logo.png)
 
-## Controls (Mouse, Keyboard &amp; THEA1200 Gamepad)
+# Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.1.0
 
-| Controller / Key | Action |
-| :--- | :--- |
-| **`LMB` (Left Mouse Button)** | Clean exit back to AmigaOS / WHDLoad |
-| **`Fire` (Joystick Port 2 / THEA1200)** | Exit demo via USB gamepad on THEA1200 (`$BFE001` bit 7) |
-| **`ESC`** | Direct CIA-A keyboard exit (`$BFEC01`) |
+**Bare-metal M68020+ / AGA Hi-Res 640x256 @ 50.00 FPS PAL Vector Demo Engine** (*malek69 & Gemini AI, 2026*)
 
----
+## Downloads & Preview (v1.1.0 Latest)
+
+| Median A1200 v1.1.0 (640x256) | Bad Apple!! A1200 v1.1.0 (640x256) |
+| :---: | :---: |
+| ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
+| **[Download .LHA (THEA1200/RetroArch)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/MedianA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP (FS-UAE/WinUAE)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/MedianA1200_AGA_THEA1200_FSUAE.zip)** | **[Download .LHA (THEA1200/RetroArch)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/BadappleA1200_AGA_THEA1200.lha)**<br>**[Download .ZIP (FS-UAE/WinUAE)](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.0/BadappleA1200_AGA_THEA1200_FSUAE.zip)** |
+
+## Requirements & Controls
+- **Hardware:** Amiga 1200 (68EC020+ 14 MHz, AGA, **2 MB Chip RAM + 8 MB Fast RAM**), **THEA1200**, FS-UAE, or WinUAE (Kickstart-free WHDLoad Slave v17).
+- **Exit:** `LMB`, **Fire (Joystick Port 2 / THEA1200)**, or `ESC`.
+
+## Engine Capabilities
+- **N-gon XOR LUT Rasterizer:** fast arbitrary-vertex polygon filling and hole cutouts via a 512 KB prefix table in Fast RAM.
+- **M68020+ / AGA & 4CH Paula DMA:** VBL-locked `50.00 FPS PAL` double-buffering, 4CH PCM audio (LED filter off), and Python video converters (`tools/`).
+
+## What is New in v1.1.0
+- **AGA Hi-Res `640x256` (`BPLCON0 = $A200`, `DDFSTOP = $00CC`, `FMODE = $0003`):** 2x horizontal sharpness with 64-bit DMA and zero CPU contention.
+- **Fast-RAM Backbuffer + `movem.l` Burst & THEA1200:** Fast-RAM rasterization, `48 B/iter` Chip-RAM copy, and THEA1200 gamepad exit.
 
 ## Engine Architecture &amp; Modules (`src/`)
 

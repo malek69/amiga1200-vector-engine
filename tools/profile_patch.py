@@ -32,7 +32,7 @@ def apply_profile(sd, profile, hz_target=12105):
     v3 = v3.replace("move.w  #255,bbox_y1", f"move.w  #{h-1},bbox_y1").replace("cmp.w  #255,d1", f"cmp.w  #{h-1},d1")
     v3 = v3.replace("mulu.w  #40,d6", "mulu.w  #80,d6").replace("mulu.w  #40,d4", "mulu.w  #80,d4")
     v3 = v3.replace("move.l  draw_bpl1(pc),a2", "lea     fast_bpl1,a2").replace("move.l  draw_bpl2(pc),a2", "lea     fast_bpl2,a2")
-    v3 = v3.replace("moveq   #40,d7", "moveq   #80,d7").replace("add.w   #40,a0", "add.w   #80,a0").replace("cmp.w #318,d4", "cmp.w #638,d4").replace("move.w  #318,d4", "move.w  #638,d4")
+    v3 = v3.replace("moveq   #40,d7", "moveq   #80,d7").replace("lea     40(a0),a0", "lea     80(a0),a0").replace("cmp.w #318,d4", "cmp.w #638,d4").replace("move.w  #318,d4", "move.w  #638,d4")
     open(f"{sd}/vec3d_engine.i", "w").write(v3)
     if profile == "060":
         sl = open(f"{sd}/whdload_slave.s").read().replace("or.w #$0808,d0", "or.w #$0909,d0").replace("dc.l $00680000", "dc.l $00780000")

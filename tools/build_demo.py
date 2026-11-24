@@ -20,7 +20,7 @@ def mk_ico(it, dt=None, tt=None):
 def mk_lha(lp, rf):
     if os.path.exists(lp): os.remove(lp)
     items = sorted(os.listdir(rf))
-    subprocess.run(["lha", "ao1", os.path.abspath(lp)] + items, cwd=rf, check=True)
+    subprocess.run(["lha", "ao1w=/tmp", os.path.abspath(lp)] + items, cwd=rf, check=True)
 
 def mk_zip(zp, rf):
     if os.path.exists(zp): os.remove(zp)
@@ -93,7 +93,7 @@ def main():
                         for (x, y) in pts:
                             pt = (int(x) + 8, int(y) + 4)
                             if not m or m[-1] != pt: m.append(pt)
-                        while len(m) >= 3 and m == m[-1]: m.pop()
+                        while len(m) >= 3 and m[0] == m[-1]: m.pop()
                         if len(m) >= 3:
                             dp.append((d & 1, tuple(m)))
                             v_tot += len(m)

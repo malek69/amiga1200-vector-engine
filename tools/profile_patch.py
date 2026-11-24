@@ -7,7 +7,7 @@ def apply_profile(sd, profile, hz_target=12105):
     g = open(f"{sd}/gfx_engine.i").read()
     g = g.replace("move.l  #bpl_buf_a+10240,disp_bpl2", f"move.l  #bpl_buf_a+{bpl_sz},disp_bpl2")
     g = g.replace("move.l  #bpl_buf_b+10240,draw_bpl2", f"move.l  #bpl_buf_b+{bpl_sz},draw_bpl2")
-    g = g.replace("dc.w    $0094,$00d0", "dc.w    $0094,$00d4")
+    g = g.replace("dc.w    $0092,$0038", "dc.w    $0092,$003c").replace("dc.w    $0094,$00d0", "dc.w    $0094,$00d4")
     g = g.replace("dc.w    $0100,$2200", "dc.w    $0100,$a204" if profile == "060" else "dc.w    $0100,$a200")
     if profile == "060":
         g = g.replace("dc.w    $0108,$0000\n    dc.w    $010a,$0000", "dc.w    $0108,$0050\n    dc.w    $010a,$0050")
@@ -35,6 +35,6 @@ def apply_profile(sd, profile, hz_target=12105):
     v3 = v3.replace("moveq   #40,d7", "moveq   #80,d7").replace("cmp.w #318,d4", "cmp.w #638,d4").replace("move.w  #318,d4", "move.w  #638,d4")
     open(f"{sd}/vec3d_engine.i", "w").write(v3)
     if profile == "060":
-        sl = open(f"{sd}/whdload_slave.s").read().replace("or.w #$0808,d0", "or.w #$0909,d0").replace("dc.l $00680000", "dc.l $00c00000")
+        sl = open(f"{sd}/whdload_slave.s").read().replace("or.w #$0808,d0", "or.w #$0909,d0").replace("dc.l $00680000", "dc.l $00780000")
         open(f"{sd}/whdload_slave.s", "w").write(sl)
     return (16497 if profile == "060" else 12105), 624, vh, 8, (8 if profile == "060" else 4), (1200 if profile == "060" else 650), ("_060_HiRes512" if profile == "060" else "_HiRes640")

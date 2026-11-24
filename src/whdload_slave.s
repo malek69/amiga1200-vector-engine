@@ -13,7 +13,7 @@ ws: moveq #-1,d0
     dc.w 0,0
 _n: dc.b "{DEMO_TITLE}",0
 _c: dc.b "malek69 {DEMO_CREDITS} Gemini AI (2026)",0
-_i: dc.b "AGA 320x256 Vector Engine + 16.5kHz Paula Audio",0
+_i: dc.b "AGA 640x256 Hi-Res Vector Engine + 16.5kHz Paula Audio",0
 _e: dc.b "{EXE_NAME}",0
     even
 rl: dc.l 0

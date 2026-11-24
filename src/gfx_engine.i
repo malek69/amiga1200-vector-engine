@@ -56,9 +56,9 @@ sys_takeover:
     move.w  #$7fff,INTENA(a5)
     move.w  #$7fff,INTREQ(a5)
     move.l  #bpl_buf_a,disp_bpl1
-    move.l  #bpl_buf_a+10240,disp_bpl2
+    move.l  #bpl_buf_a+20480,disp_bpl2
     move.l  #bpl_buf_b,draw_bpl1
-    move.l  #bpl_buf_b+10240,draw_bpl2
+    move.l  #bpl_buf_b+20480,draw_bpl2
     bsr.w   swap_buffers
     move.l  #copper_list,COP1LC(a5)
     move.w  d0,COPJMP1(a5)
@@ -120,7 +120,7 @@ blit_clear_full:
     move.w  #$0000,BLTCON1(a5)
     move.w  #0,BLTDMOD(a5)
     move.l  a0,BLTDPTH(a5)
-    move.w  #$4014,BLTSIZE(a5)
+    move.w  #$4028,BLTSIZE(a5)
     rts
 
 vbl_irq_handler:
@@ -149,11 +149,11 @@ swap_ready: dc.b 0,0
     even
 copper_list:
     dc.w    $0106,$0c00
-    dc.w    $01fc,$0000
+    dc.w    $01fc,$0003
     dc.w    $008e,$2c81
     dc.w    $0090,$2cc1
-    dc.w    $0092,$0038
-    dc.w    $0094,$00d0
+    dc.w    $0092,$003c
+    dc.w    $0094,$00d4
     dc.w    $0108,$0000
     dc.w    $010a,$0000
     dc.w    $0102,$0000
@@ -170,9 +170,9 @@ cop_b1l: dc.w 0
 cop_b2h: dc.w 0
     dc.w    $00e6
 cop_b2l: dc.w 0
-    dc.w    $0100,$2200
+    dc.w    $0100,$a200
     dc.w    $ffff,$fffe
     section bpl_chip,bss_c
-bpl_buf_a:  ds.b 20480
-bpl_buf_b:  ds.b 20480
+bpl_buf_a:  ds.b 40960
+bpl_buf_b:  ds.b 40960
     section code,code

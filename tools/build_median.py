@@ -75,7 +75,7 @@ exe = os.path.abspath("releases/MEDIAN_A1200")
 subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe], cwd=sd, check=True)
 os.chmod(exe, 0o755)
 sz = os.path.getsize(exe)
-em = ((sz + 0x0B0000 + 0xFFFF) & ~0xFFFF)
+em = ((sz + 0x180000 + 0xFFFF) & ~0xFFFF)
 lo = em - sz - 256
 pr = f"{od}/_tmp_med"
 shutil.rmtree(pr, ignore_errors=True)

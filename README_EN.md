@@ -22,7 +22,7 @@
 - **M68020+ / AGA & 4CH Paula DMA:** VBL-locked `50.00 FPS PAL` double-buffering, 4CH PCM audio (LED filter off), and Python video converters (`tools/`).
 
 ## What is New in v1.1.0
-- **AGA Hi-Res `640x256` (`BPLCON0 = $A200`, `DDFSTOP = $00CC`, `FMODE = $0003`):** 2x horizontal sharpness with 64-bit DMA and zero CPU contention.
+- **AGA Hi-Res `640x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`, `FMODE = $0003`):** 2x horizontal sharpness with 64-bit DMA and zero CPU contention.
 - **Fast-RAM Backbuffer + `movem.l` Burst & THEA1200:** Fast-RAM rasterization, `48 B/iter` Chip-RAM copy, and THEA1200 gamepad exit.
 
 ## Engine Architecture &amp; Modules (`src/`)
@@ -30,7 +30,7 @@
 | Module | Role | Hardware &amp; Algorithms |
 | :--- | :--- | :--- |
 | **`main.s`** | Main 50 Hz PAL Loop | VBL frame lock (`50.00 FPS`), Fast-RAM buffer clear, and unrolled `movem.l` (`48 B/iter`) `Fast -> Chip` burst transfer |
-| **`gfx_engine.i`** | AGA &amp; Copper Setup | Hardware takeover (`sys_takeover`), native **AGA Hi-Res `640x256`** (`BPLCON0 = $A200`, `DDFSTOP = $00CC`), 64-bit bitplanes (`FMODE = $0003`), VBL double-buffering |
+| **`gfx_engine.i`** | AGA &amp; Copper Setup | Hardware takeover (`sys_takeover`), native **AGA Hi-Res `640x256`** (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`), 64-bit bitplanes (`FMODE = $0003`), VBL double-buffering |
 | **`vec3d_engine.i`** | N-gon Polygon Rasterizer | 16-bit edge stepping (`0..639 x 0..255`) into `edge_buf` and XOR span filling with hole cutouts via 512 KB `fill_lut` in Fast RAM |
 | **`scene_player.i`** | Frame Stream Decoder | Reads `vec_frame_table` stream and dispatches polygons to target AGA bitplanes |
 | **`audio_player.i`** | 4CH Paula DMA Audio | Streams PCM audio from Fast RAM via dual `2048 B` Chip-RAM buffers (Level 4 IRQ) with hardware LED filter disabled |

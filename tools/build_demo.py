@@ -47,7 +47,7 @@ def main():
     sd, od = os.path.join(repo, "src"), os.path.join(repo, "releases/v1.1.0")
     os.makedirs(od, exist_ok=True)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", args.video], capture_output=True, text=True, check=True).stdout.strip() or 180)
-    hz = max(8000, min(16497, int(2650000 / max(1.0, dur))))
+    hz = max(8000, min(16497, int(1550000 / max(1.0, dur))))
     per = round(3546895 / hz)
     hz_r = 3546895.0 / per
     print(f"[1/4] Audio: {hz_r:.1f} Hz (AUD0PER={per}) | Video: {args.fps} FPS @ 640x256 Hi-Res", flush=True)
@@ -84,7 +84,7 @@ def main():
                     while par != -1: d += 1; par = int(hr.item(par, 3))
                     items.append((d, i))
                 items.sort()
-                for eps in (1.2, 1.8, 2.5, 3.4):
+                for eps in (1.5, 2.1, 2.9, 3.8):
                     dp, v_tot = list(), 0
                     for d, i in items:
                         if cv2.contourArea(cnts[i]) < (36.0 if (d & 1) else 18.0): continue
@@ -97,7 +97,7 @@ def main():
                         if len(m) >= 3:
                             dp.append((d & 1, tuple(m)))
                             v_tot += len(m)
-                    if v_tot <= 600: break
+                    if v_tot <= 460: break
         key = tuple(dp)
         if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
         pr_raw, pr_lbl = raw, uniq[key]
@@ -114,7 +114,7 @@ def main():
     subprocess.run(["vasmm68k_mot", "-m68020", "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe_out], cwd=sd, check=True)
     os.chmod(exe_out, 0o755)
     sz = os.path.getsize(exe_out)
-    em = ((sz + 0x1E0000 + 0xFFFF) & ~0xFFFF)
+    em = ((sz + 0x0E0000 + 0xFFFF) & ~0xFFFF)
     lo = em - sz - 256
     pr = os.path.join(od, "_tmp_pkg")
     shutil.rmtree(pr, ignore_errors=True)

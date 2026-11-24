@@ -153,7 +153,7 @@ copper_list:
     dc.w    $008e,$2c81
     dc.w    $0090,$2cc1
     dc.w    $0092,$003c
-    dc.w    $0094,$00d4
+    dc.w    $0094,$00cc
     dc.w    $0108,$0000
     dc.w    $010a,$0000
     dc.w    $0102,$0000
@@ -173,6 +173,8 @@ cop_b2l: dc.w 0
     dc.w    $0100,$a200
     dc.w    $ffff,$fffe
     section bpl_chip,bss_c
+    cnop 0,8
 bpl_buf_a:  ds.b 40960
+    cnop 0,8
 bpl_buf_b:  ds.b 40960
     section code,code

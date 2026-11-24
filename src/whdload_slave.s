@@ -3,7 +3,7 @@
 ws: moveq #-1,d0
     rts
     dc.b "WHDLOADS"
-    dc.w 17,$0024
+    dc.w 17,$0026
     dc.l $200000,0
     dc.w _start-ws,0,0
     dc.b 0,$59
@@ -62,7 +62,7 @@ _start:
     addq.l #4,a0
     move.l (a0)+,d6
     addq.l #8,a0
-    move.l #$00040000,d3
+    move.l #$00010000,d3
     move.l ws+$20(pc),d4
     lea hb(pc),a3
     move.w d6,d7

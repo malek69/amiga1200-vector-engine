@@ -1,6 +1,13 @@
 <p align="right"><a href="README.md">Polski</a> | <a href="README_EN.md">English</a> | <strong>Historia Zmian (PL)</strong> | <a href="CHANGELOG_EN.md">Changelog (EN)</a></p>
 
-# Historia Zmian — A1200 Vector Engine
+# Historia Zmian
+
+## [1.1.0] - 2026-11-24
+### Dodano i Naprawiono
+- **Trzy obozy wydawnicze (`--profile`):** `standard` (`320x256` AGA + Blitter AA dla bazowej A1200 i RetroArch Android), `thea1200` (`640x256` AGA Hi-Res + Fast-RAM `movem.l`), `060` (`640x512` AGA Interlace `1:1` + `14.6-16.5 kHz` PCM).
+- **Kompatybilnosc WHDLoad / Amiberry / Android:** zapasowy `S/startup-sequence` w `.lha`, flaga `$0026` oraz pelna synchronizacja pol `LOF`.
+
+ — A1200 Vector Engine
 
 ## v1.1.0 — AGA + Blitter AA 320x256 (2026-11-24)
 - **Natywny tryb AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`):** 2x wyzsza ostrosc pozioma wektorow przy 50.00 FPS PAL.

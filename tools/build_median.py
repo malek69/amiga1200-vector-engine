@@ -5,7 +5,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--profile", choices=("standard", "thea1200", "060"), default="standard")
 args = ap.parse_args()
 vid = "demos/median/hi.mp4"
-od = "releases/v1.1.0"
+od = "releases/v1.1.1"
 os.makedirs(od, exist_ok=True)
 sd = "/tmp/_vec_median_build"
 shutil.rmtree(sd, ignore_errors=True)
@@ -53,18 +53,18 @@ while True:
                     if len(m) >= 3: dp.append((d & 1, m)); vt += len(m)
                 if vt <= (vlim // 2) or eps == 3.1: break
     if np.any(red_m):
-        rcnts, _ = cv2.findContours(red_m, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        for c in rcnts:
-            if cv2.contourArea(c) < 20.0: continue
-            (cx, cy), rad = cv2.minEnclosingCircle(c)
-            cx_a, cy_a, rx_a, ry_a = cx * sx + ox, cy * sy + oy, rad * sx, rad * sy
-            pts32 = list()
-            for k in range(32):
-                ang = (2.0 * np.pi * k) / 32.0
-                pt = (max(0, min(vw + ox * 2 - 1, int(round(cx_a + rx_a * np.cos(ang))))), max(0, min(vh + oy * 2 - 1, int(round(cy_a + ry_a * np.sin(ang))))))
-                if not pts32 or pts32[-1] != pt: pts32.append(pt)
-            while len(pts32) >= 3 and next(iter(pts32)) == pts32[-1]: pts32.pop()
-            if len(pts32) >= 3: dp.append((2, tuple(pts32)))
+        rcnts, rhr = cv2.findContours(red_m, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
+        if rhr is not None:
+            ritems = list()
+            for i in range(len(rcnts)):
+                if cv2.contourArea(rcnts[i]) < 16.0: continue
+                d, par = 0, int(rhr.item(0, i, 3))
+                while par != -1: d += 1; par = int(rhr.item(0, par, 3))
+                ritems.append((d, i))
+            ritems.sort()
+            for d, i in ritems:
+                m = snap_poly(rcnts[i], 1.4)
+                if len(m) >= 3: dp.append((2 + (d & 1), m))
     key = tuple(dp)
     if key not in uniq: uniq[key] = f"vf_{len(uniq)}"
     pr_raw, pr_lbl = raw, uniq[key]
@@ -87,7 +87,7 @@ shutil.rmtree(pr, ignore_errors=True)
 pd = os.path.join(pr, fn_d)
 os.makedirs(pd, exist_ok=True)
 shutil.copy2(exe, os.path.join(pd, "MEDIAN_A1200"))
-sl = open(f"{sd}/whdload_slave.s").read().replace("{DEMO_TITLE}", f"Median A1200 v1.1.0 [{args.profile}]").replace("{DEMO_CREDITS}", "Umlaut Design | Port: malek69").replace("{EXE_NAME}", "MEDIAN_A1200")
+sl = open(f"{sd}/whdload_slave.s").read().replace("{DEMO_TITLE}", f"Median A1200 v1.1.1 [{args.profile}]").replace("{DEMO_CREDITS}", "Umlaut Design | Port: malek69").replace("{EXE_NAME}", "MEDIAN_A1200")
 ss = os.path.join(pr, "slave.s")
 open(ss, "w").write(sl)
 subprocess.run(("vasmm68k_mot", cpu, *defs, "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")), check=True)

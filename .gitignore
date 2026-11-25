@@ -4,3 +4,4 @@ src/scene_data.i
 src/*.raw
 __pycache__/
 *.o
+demos/*/*.mp4

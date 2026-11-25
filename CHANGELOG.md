@@ -9,6 +9,13 @@
 
  — A1200 Vector Engine
 
+## v1.1.1 — Eon (TBL) Cutscenes & Native MC68060 (2026-11-25)
+
+- **Moduł scen rotoskopowych *Eon* (TBL) (`src/eon_poly_player.i`):** bezkonturowy odtwarzacz wielotonowych wielokątów N-gon w 256 kolorach AGA (`af_play_eon_scene`) przeniesiony z gry *Aether Falcon: Vanguard*.
+- **Natywna obsługa MC68060 (`src/whdload_slave.s`, `tools/build_demo.py`, `tools/build_median.py`):** flaga WHDLoad `$0026`, **7.5 MB Fast RAM** (`$00780000`), 32-bitowy rejestr **`CACR = $A0808000`** oraz flaga kompilacji `-DM68060` dla profili `060`.
+
+---
+
 ## v1.1.0 — AGA + Blitter AA 320x256 (2026-11-24)
 - **Natywny tryb AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`):** 2x wyzsza ostrosc pozioma wektorow przy 50.00 FPS PAL.
 - **64-bitowe bitplany (`FMODE = $0003`) i Fast-RAM Pipeline:** rasteryzacja w Fast RAM oraz szybki transfer `movem.l` (48 B/iter) do Chip RAM.

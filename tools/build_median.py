@@ -4,7 +4,7 @@ import build_demo as bd, profile_patch as pp
 ap = argparse.ArgumentParser()
 ap.add_argument("--profile", choices=("standard", "thea1200", "060"), default="standard")
 args = ap.parse_args()
-vid = os.path.expanduser("~/hi.mp4")
+vid = "demos/median/hi.mp4"
 od = "releases/v1.1.0"
 os.makedirs(od, exist_ok=True)
 sd = "/tmp/_vec_median_build"
@@ -78,7 +78,8 @@ for dp, l in uniq.items():
 open(f"{sd}/scene_data.i", "w").write(chr(10).join(lines) + chr(10))
 exe = os.path.abspath(f"{od}/MEDIAN_A1200")
 cpu = "-m68060" if args.profile == "060" else "-m68020"
-subprocess.run(("vasmm68k_mot", cpu, "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe), cwd=sd, check=True)
+defs = ["-DM68060"] if args.profile == "060" else list()
+subprocess.run(("vasmm68k_mot", cpu, *defs, "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe), cwd=sd, check=True)
 os.chmod(exe, 0o755)
 fn_d = "MedianA1200_AGA" + sfx
 pr = os.path.join(od, f"_tmp_med_{args.profile}")
@@ -89,7 +90,7 @@ shutil.copy2(exe, os.path.join(pd, "MEDIAN_A1200"))
 sl = open(f"{sd}/whdload_slave.s").read().replace("{DEMO_TITLE}", f"Median A1200 v1.1.0 [{args.profile}]").replace("{DEMO_CREDITS}", "Umlaut Design | Port: malek69").replace("{EXE_NAME}", "MEDIAN_A1200")
 ss = os.path.join(pr, "slave.s")
 open(ss, "w").write(sl)
-subprocess.run(("vasmm68k_mot", cpu, "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")), check=True)
+subprocess.run(("vasmm68k_mot", cpu, *defs, "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")), check=True)
 os.remove(ss)
 open(f"{pr}/{fn_d}.info", "wb").write(bd.mk_ico(4, "WHDLoad", (f"SLAVE={fn_d}.slave", "NoMMU")))
 open(f"{pd}/{fn_d}.info", "wb").write(bd.mk_ico(4, "WHDLoad", (f"SLAVE={fn_d}.slave", "NoMMU")))

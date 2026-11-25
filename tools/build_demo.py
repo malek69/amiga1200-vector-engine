@@ -107,7 +107,8 @@ def main():
     open(os.path.join(sd, "scene_data.i"), "w").write(chr(10).join(lines) + chr(10))
     exe = os.path.join(od, args.name)
     cpu = "-m68060" if args.profile == "060" else "-m68020"
-    subprocess.run(("vasmm68k_mot", cpu, "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe), cwd=sd, check=True)
+    defs = ["-DM68060"] if args.profile == "060" else list()
+    subprocess.run(("vasmm68k_mot", cpu, *defs, "-Fhunkexe", "-kick1hunks", "-nosym", "-I.", "main.s", "-o", exe), cwd=sd, check=True)
     os.chmod(exe, 0o755)
     fn_d = args.name.title().replace("_", "").replace("A1200", "A1200_AGA") + sfx
     pr = os.path.join(od, f"_tmp_{args.profile}")
@@ -118,7 +119,7 @@ def main():
     sl = open(os.path.join(sd, "whdload_slave.s")).read().replace("{DEMO_TITLE}", f"{args.title} [{args.profile}]").replace("{DEMO_CREDITS}", args.credits).replace("{EXE_NAME}", args.name)
     ss = os.path.join(pr, "slave.s")
     open(ss, "w").write(sl)
-    subprocess.run(("vasmm68k_mot", cpu, "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")), check=True)
+    subprocess.run(("vasmm68k_mot", cpu, *defs, "-Fhunkexe", "-nosym", ss, "-o", os.path.join(pd, f"{fn_d}.slave")), check=True)
     os.remove(ss)
     open(os.path.join(pr, f"{fn_d}.info"), "wb").write(mk_ico(4, "WHDLoad", (f"SLAVE={fn_d}.slave", "NoMMU")))
     open(os.path.join(pd, f"{fn_d}.info"), "wb").write(mk_ico(4, "WHDLoad", (f"SLAVE={fn_d}.slave", "NoMMU")))

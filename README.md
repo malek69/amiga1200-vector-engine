@@ -1,6 +1,6 @@
 [**Polski**](README.md) | [English](README_EN.md) | [Historia Zmian (PL)](CHANGELOG.md) | [Changelog (EN)](CHANGELOG_EN.md)
 
-![Logo](docs/engine_logo.png)
+![Logo](docs/engine_logo.png?v=2)
 
 # Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.1.2
 

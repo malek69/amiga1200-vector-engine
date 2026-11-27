@@ -35,6 +35,8 @@ def main():
     ap.add_argument("--fps", type=int, default=50)
     ap.add_argument("--threshold", type=int, default=120)
     ap.add_argument("--crop-43", action="store_true")
+    ap.add_argument("--anti-flicker", action="store_true")
+    ap.add_argument("--crisp-opart", action="store_true")
     ap.add_argument("--profile", choices=("standard", "thea1200", "060"), default="standard")
     args = ap.parse_args()
     repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,13 +61,13 @@ def main():
     proc = subprocess.Popen(("ffmpeg", "-v", "error", "-i", args.video, "-vf", f"crop={cw}:{h_s}:{x0}:0,scale={vw}:{vh}:flags=lanczos,fps={args.fps}", "-f", "rawvideo", "-pix_fmt", "gray", "-"), stdout=subprocess.PIPE)
     fb, uniq, fl, pr_raw, pr_lbl = vw * vh, dict(), list(), None, None
     k3 = np.ones((3, 3), dtype=np.uint8)
-    eps_seq = (1.1, 1.6, 2.3, 3.2) if args.profile == "060" else ((1.5, 2.1, 2.9, 3.8) if args.profile == "thea1200" else (1.05, 1.55, 2.2, 3.0))
+    eps_seq = (1.1, 1.6, 2.3, 3.2) if args.profile == "060" else ((0.9, 1.2, 1.6, 2.1) if args.crisp_opart else (1.5, 2.1, 2.9, 3.8) if args.profile == "thea1200" else (1.05, 1.55, 2.2, 3.0))
     while True:
         raw = proc.stdout.read(fb)
         if len(raw) < fb: break
         if raw == pr_raw: fl.append(pr_lbl); continue
         g = np.frombuffer(raw, dtype=np.uint8).reshape((vh, vw))
-        db = cv2.morphologyEx((cv2.medianBlur(g, 3) < args.threshold).astype(np.uint8), cv2.MORPH_CLOSE, k3)
+        db = (g < args.threshold).astype(np.uint8) if args.crisp_opart else cv2.morphologyEx((cv2.medianBlur(g, 3) < args.threshold).astype(np.uint8), cv2.MORPH_CLOSE, k3)
         dp = list()
         if np.any(db):
             cnts, hr = cv2.findContours(db, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_NONE)
@@ -94,6 +96,15 @@ def main():
         pr_raw, pr_lbl = raw, uniq[key]
         fl.append(pr_lbl)
     proc.wait()
+    if args.anti_flicker and len(fl) > 4:
+        for _ in range(2):
+            for idx in range(1, len(fl) - 1):
+                if fl[idx - 1] == fl[idx + 1] and fl[idx] != fl[idx - 1]:
+                    fl[idx] = fl[idx - 1]
+            for idx in range(1, len(fl) - 2):
+                if fl[idx - 1] == fl[idx + 2] and fl[idx] == fl[idx + 1] and fl[idx] != fl[idx - 1]:
+                    fl[idx] = fl[idx - 1]
+                    fl[idx + 1] = fl[idx - 1]
     lines = list((f"vec_frame_count: dc.w {len(fl)}", "    even", "vec_frame_table:")) + list(f"    dc.l {l}" for l in fl)
     for dp, l in uniq.items():
         lines.append(f"{l}: dc.w $0eee")

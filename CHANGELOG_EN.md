@@ -2,7 +2,7 @@
 
 # Changelog — A1200 Vector Engine
 
-## v1.1.1 — Eon (TBL) Cutscenes & Native MC68060 (2026-11-25)
+## v1.1.2 — Eon (TBL) Cutscenes & Native MC68060 (2026-11-25)
 
 - **Rotoscoped *Eon* (TBL) Cutscene Module (`src/eon_poly_player.i`):** borderless 256-color AGA multi-tone N-gon polygon player (`af_play_eon_scene`) ported from *Aether Falcon: Vanguard*.
 - **Native MC68060 Support (`src/whdload_slave.s`, `tools/build_demo.py`, `tools/build_median.py`):** WHDLoad `$0026` flags, **7.5 MB Fast RAM** (`$00780000`), 32-bit **`CACR = $A0808000`**, and `-DM68060` compiler flags across `060` builds.

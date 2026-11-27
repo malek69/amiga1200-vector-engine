@@ -2,16 +2,16 @@
 
 ![Logo](docs/engine_logo.png)
 
-# Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.1.1
+# Amiga 1200 / THEA1200 Vector Stream Demo Engine v1.1.2
 
 **Bare-metalowy silnik wektorowy M68020+ / AGA + Blitter AA 320x256 @ 50.00 FPS PAL** (*malek69 & Gemini AI, 2026*)
 
-## Pobieranie i Podgląd (v1.1.1 — 3 Obozy Wydawnicze)
+## Pobieranie i Podgląd (v1.1.2 — 3 Obozy Wydawnicze)
 
-| Median A1200 v1.1.1 | Bad Apple!! A1200 v1.1.1 |
-| :---: | :---: |
-| ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) |
-| **1. Standard `020` (`320x256` + Blitter AA):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/MedianA1200_AGA_THEA1200.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/MedianA1200_AGA_THEA1200_FSUAE.zip)<br>**2. THEA1200 (`640x256` AGA Hi-Res):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/MedianA1200_AGA_HiRes640.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/MedianA1200_AGA_HiRes640_FSUAE.zip)<br>**3. Turbo `MC68060` (`640x512` Interlace):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/MedianA1200_AGA_060_HiRes512.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/MedianA1200_AGA_060_HiRes512_FSUAE.zip) | **1. Standard `020` (`320x256` + Blitter AA):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/BadappleA1200_AGA_THEA1200.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/BadappleA1200_AGA_THEA1200_FSUAE.zip)<br>**2. THEA1200 (`640x256` AGA Hi-Res):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/BadappleA1200_AGA_HiRes640.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/BadappleA1200_AGA_HiRes640_FSUAE.zip)<br>**3. Turbo `MC68060` (`640x512` Interlace):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/BadappleA1200_AGA_060_HiRes512.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.1/BadappleA1200_AGA_060_HiRes512_FSUAE.zip) |
+| Median A1200 v1.1.2 | Bad Apple!! A1200 v1.1.2 | Intrinsic Gravity (Still) v1.1.2 |
+| :---: | :---: | :---: |
+| ![Median](docs/preview_median.png) | ![Bad Apple](docs/preview.png) | ![Intrinsic Gravity](docs/preview_ig.png) |
+| **1. Standard `020` (`320x256` + Blitter AA):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/MedianA1200_AGA_THEA1200.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/MedianA1200_AGA_THEA1200_FSUAE.zip)<br>**2. THEA1200 (`640x256` AGA Hi-Res):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/MedianA1200_AGA_HiRes640.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/MedianA1200_AGA_HiRes640_FSUAE.zip)<br>**3. Turbo `MC68060` (`640x512` Interlace):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/MedianA1200_AGA_060_HiRes512.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/MedianA1200_AGA_060_HiRes512_FSUAE.zip) | **1. Standard `020` (`320x256` + Blitter AA):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/BadappleA1200_AGA_THEA1200.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/BadappleA1200_AGA_THEA1200_FSUAE.zip)<br>**2. THEA1200 (`640x256` AGA Hi-Res):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/BadappleA1200_AGA_HiRes640.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/BadappleA1200_AGA_HiRes640_FSUAE.zip)<br>**3. Turbo `MC68060` (`640x512` Interlace):**<br>[.LHA](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/BadappleA1200_AGA_060_HiRes512.lha) · [.ZIP](https://github.com/malek69/amiga1200-vector-engine/releases/download/v1.1.2/BadappleA1200_AGA_060_HiRes512_FSUAE.zip) | **3. Intrinsic Gravity (Still — `pixtur` & `Hoffman`)**:<br>• **020 + Blitter AA (`320×256`)**: [.LHA](releases/v1.1.0/Intrinsicgravity_THEA1200.lha) · [.ZIP](releases/v1.1.0/Intrinsicgravity_THEA1200_FSUAE.zip)<br>• **THEA1200 HiRes (`640×256`)**: [.LHA](releases/v1.1.0/Intrinsicgravity_HiRes640.lha) · [.ZIP](releases/v1.1.0/Intrinsicgravity_HiRes640_FSUAE.zip)<br>• **060 Interlace (`640×512`)**: [.LHA](releases/v1.1.0/Intrinsicgravity_060_HiRes512.lha) · [.ZIP](releases/v1.1.0/Intrinsicgravity_060_HiRes512_FSUAE.zip) |
 
 ## Trzy Obozy Wydawnicze (3 Target Profiles)
 | Profil (`--profile`) | Platforma docelowa | Rozdzielczosc i potok | Audio i detale |
@@ -20,7 +20,7 @@
 | **`thea1200`** | Konsola **THEA1200**, **Amiberry (PC)**, **FS-UAE** | Natywne **`640x256` AGA Hi-Res** + Fast-RAM `movem.l` @ `50 FPS` | `12.1–16.5 kHz` PCM, do `650` wierzcholkow |
 | **`060`** | Karty turbo **`MC68060` (50+ MHz, Z3 Fast RAM)** | **`640x512` AGA Hi-Res Interlace** (`1:1`, 0 schodkow) | `16.5 kHz` PCM, do `1200` wierzcholkow |
 
-## Warianty Paczek i Kompatybilność (v1.1.1)
+## Warianty Paczek i Kompatybilność (v1.1.2)
 - **`.lha` (`*_AGA_THEA1200.lha` — RetroArch PUAE / THEA1200 / Real A1200):** spakowane z naglowkami Amiga LHA Level 1 oraz 78-bajtowymi ikonami WHDLoad `WBPROJECT`. Przetestowane przez **Load Content** w **RetroArch (`PUAE`)** oraz **THEA1200 (`Amiberry`)**.
 - **`.zip` (`*_AGA_THEA1200_FSUAE.zip` — FS-UAE Launcher / WinUAE):** archiwum WHDLoad ZIP obslugiwane natywnie bez zewnetrznych wtyczek `python-lhafile`. Auto-boot jednym kliknieciem przez `S/startup-sequence` — zamontuj `.zip` jako dysk twardy (`DH0`) na profilu A1200 (8 MB Fast RAM) i kliknij **Start**.
 
@@ -36,7 +36,7 @@
 
 - **Wielotonowy odtwarzacz scen rotoskopowych *Eon* (TBL) (`src/eon_poly_player.i`):** bezkonturowy rasteryzer wielokątów N-gon w 256 kolorach AGA przeniesiony z gry *Aether Falcon: Vanguard* oraz natywna obsługa **MC68060 (`CACR = $A0808000`, 7.5 MB Fast RAM)**.
 
-## Co nowego w v1.1.1
+## Co nowego w v1.1.2
 - **AGA + Blitter AA `320x256` (`BPLCON0 = $A200`, `DDFSTRT = $0028, DDFSTOP = $00B8`, `FMODE = $0003`):** 2x wyzsza ostrosc pozioma wektorow z 64-bitowym DMA bez dlawienia CPU.
 - **Fast-RAM Backbuffer + `movem.l` Burst & THEA1200:** rysowanie w Fast RAM, transfer blokowy `48 B/iter` do Chip RAM oraz wyjscie padem THEA1200.
 

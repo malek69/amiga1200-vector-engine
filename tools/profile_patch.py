@@ -39,4 +39,4 @@ def apply_profile(sd, profile, hz_target=12105):
     if profile == "060":
         sl = open(f"{sd}/whdload_slave.s").read().replace("or.w #$0808,d0", "or.w #$0909,d0").replace("dc.l $00680000", "dc.l $00780000")
         open(f"{sd}/whdload_slave.s", "w").write(sl)
-    return (16497 if profile == "060" else 12105), 624, vh, 8, (8 if profile == "060" else 4), (1200 if profile == "060" else 650), ("_060_HiRes512" if profile == "060" else "_HiRes640")
+    return (16497 if profile == "060" else 12105), 624, vh, 8, (8 if profile == "060" else 4), (3200 if profile == "060" else 2400), ("_060_HiRes512" if profile == "060" else "_HiRes640")
